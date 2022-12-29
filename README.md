@@ -1,4 +1,4 @@
-## Noise
+## every-noise
 
 3D every(where) noise javascript class for all your noise needs.
 
@@ -14,7 +14,22 @@
 
 - set properties of noise to own noise object (e.g. set noise.scale = new Noise());
 
-### Get noise value
+### how to use
+
+#### import
+
+```html
+<script src="https://flo-bit.github.io/every-noise/noise.js"></script>
+```
+
+#### create noise object
+
+```javascript
+// optionally pass in settings object
+let noise = new Noise();
+```
+
+#### get noise value
 
 ```javascript
 let value = noise.get(x, y, z);
@@ -31,21 +46,15 @@ let value = noise.get(vector);
 
 #### simple p5
 
-[simple p5 1D noise](https://flo-bit.github.io/every-noise/demos/p5-simple-1D-noise.html)
-
-[simple p2 2D noise](https://flo-bit.github.io/every-noise/demos/p5-simple-2D-noise.html)
+[1D noise](https://flo-bit.github.io/every-noise/demos/p5-simple-1D-noise.html), [2D noise](https://flo-bit.github.io/every-noise/demos/p5-simple-2D-noise.html)
 
 #### tileable p5
 
-[tileable 1D noise](https://flo-bit.github.io/every-noise/demos/p5-tileable-1D-noise.html)
-
-[tileable 2D noise](https://flo-bit.github.io/every-noise/demos/p5-tileable-2D-noise.html)
+[1D noise](https://flo-bit.github.io/every-noise/demos/p5-tileable-1D-noise.html), [2D noise](https://flo-bit.github.io/every-noise/demos/p5-tileable-2D-noise.html)
 
 #### fBm p5
 
-[fbm 1D noise](https://flo-bit.github.io/every-noise/demos/p5-fbm-1D-noise.html)
-
-[fbm 2D noise](https://flo-bit.github.io/every-noise/demos/p5-fbm-2D-noise.html)
+[1D noise](https://flo-bit.github.io/every-noise/demos/p5-fbm-1D-noise.html), [2D noise](https://flo-bit.github.io/every-noise/demos/p5-fbm-2D-noise.html)
 
 ### coming soon
 
