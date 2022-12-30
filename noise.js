@@ -1,75 +1,128 @@
-/*
- *
- * vector class
+/**
+ * vector class for 2D, 3D and 4D vectors
  *
  */
 class Vector {
-  constructor(x, y, z) {
-    this.x = x == undefined ? 0 : x;
-    this.y = y == undefined ? 0 : y;
-    this.z = z == undefined ? 0 : z;
+  /**
+   * @param {number} x
+   * @param {number} y
+   * @param {number} z
+   * @param {number} w
+   * @returns {Vector}
+   * @constructor
+   */
+  constructor(x, y, z, w) {
+    if (x != undefined && typeof x == "object" && x.x != undefined) {
+      this.copy(x);
+    } else {
+      this.set(x || 0, y || 0, z, w);
+    }
 
     this.isVector = true;
+
     this.is2D = z == undefined;
+    this.is3D = !this.is2D && w == undefined;
+    this.is4D = !this.is2D && !this.is3D;
+    return this;
   }
   copy(vec) {
     this.x = vec.x;
     this.y = vec.y;
     this.z = vec.z;
+    this.w = vec.w;
+
     return this;
   }
   clone() {
-    return new Vector(this.x, this.y, this.z);
+    return new Vector(this.x, this.y, this.z, this.w);
   }
-  set(x, y, z) {
+  set(x, y, z, w) {
     if (typeof x != "number" && x.x != undefined) {
-      return this.set(x.x, x.y, x.z);
+      return this.copy(x);
     }
-    this.x = x == undefined ? 0 : x;
-    this.y = y == undefined ? 0 : y;
-    this.z = z == undefined ? 0 : z;
+    if (y == undefined && z == undefined && w == undefined) {
+      if (this.is2D) this.set(x, x);
+      if (this.is3D) this.set(x, x, x);
+      if (this.is4D) this.set(x, x, x, x);
+    }
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.w = w;
     return this;
   }
-  add(x, y, z) {
+  add(x, y, z, w) {
     if (typeof x != "number" && x.x != undefined) {
-      return this.add(x.x, x.y, x.z);
+      return this.add(x.x, x.y, x.z, x.w);
     }
-    this.x += x == undefined ? 0 : x;
-    this.y += y == undefined ? 0 : y;
-    this.z += z == undefined ? 0 : z;
+    if (y == undefined && z == undefined && w == undefined) {
+      if (this.is2D) this.add(x, x);
+      if (this.is3D) this.add(x, x, x);
+      if (this.is4D) this.add(x, x, x, x);
+    }
+    this.x += x || 0;
+    this.y += y || 0;
+    this.z += z || 0;
+    this.w += w || 0;
     return this;
   }
-  sub(x, y, z) {
+  sub(x, y, z, w) {
     if (typeof x != "number" && x.x != undefined) {
-      return this.sub(x.x, x.y, x.z);
+      return this.sub(x.x, x.y, x.z, x.w);
     }
-    this.x -= x == undefined ? 0 : x;
-    this.y -= y == undefined ? 0 : y;
-    this.z -= z == undefined ? 0 : z;
+    if (y == undefined && z == undefined && w == undefined) {
+      if (this.is2D) this.sub(x, x);
+      if (this.is3D) this.sub(x, x, x);
+      if (this.is4D) this.sub(x, x, x, x);
+    }
+    this.x -= x || 0;
+    this.y -= y || 0;
+    this.z -= z || 0;
+    this.w -= w || 0;
     return this;
   }
-  mult(x, y, z) {
+  mult(x, y, z, w) {
     if (typeof x != "number" && x.x != undefined) {
-      return this.mult(x.x, x.y, x.z);
+      return this.mult(x.x, x.y, x.z, x.w);
     }
-    this.x *= x == undefined ? 0 : x;
-    this.y *= y == undefined ? (x == undefined ? 0 : x) : y;
-    this.z *= z == undefined ? (x == undefined ? 0 : x) : z;
+    if (y == undefined && z == undefined && w == undefined) {
+      if (this.is2D) this.mult(x, x);
+      if (this.is3D) this.mult(x, x, x);
+      if (this.is4D) this.mult(x, x, x, x);
+    }
+    this.x *= x || 0;
+    this.y *= y || 0;
+    this.z *= z || 0;
+    this.w *= w || 0;
     return this;
   }
-  div(x, y, z) {
+  div(x, y, z, w) {
     if (typeof x != "number" && x.x != undefined) {
-      return this.div(m.x, x.y, x.z);
+      return this.div(m.x, x.y, x.z, x.w);
     }
-    this.x /= x == undefined ? 0 : x;
-    this.y /= y == undefined ? (x == undefined ? 0 : x) : y;
-    this.z /= z == undefined ? (x == undefined ? 0 : x) : z;
+    if (y == undefined && z == undefined && w == undefined) {
+      if (this.is2D) this.div(x, x);
+      if (this.is3D) this.div(x, x, x);
+      if (this.is4D) this.div(x, x, x, x);
+    }
+    this.x /= x || 0;
+    this.y /= y || 0;
+    this.z /= z || 0;
+    this.w /= w || 0;
     return this;
   }
   dot(vec) {
-    return this.x * vec.x + this.y * vec.y + this.z * vec.z;
+    return (
+      this.x * vec.x +
+      this.y * vec.y +
+      (this.z != undefined ? this.z * vec.z : 0) +
+      (this.w != undefined ? this.w * vec.w : 0)
+    );
   }
+  // 3D only
   cross(vec) {
+    if (!this.is3D || !vec.is3D)
+      console.warn("cross(vec) only supports 3D vectors");
     return new Vector(
       this.y * vec.z - this.z * vec.y,
       this.z * vec.x - this.x * vec.z,
@@ -77,24 +130,34 @@ class Vector {
     );
   }
 
-  distXYZ(bx, by, bz) {
-    let dx = this.x - bx;
-    let dy = (this.y || 0) - (by || 0);
-    let dz = (this.z || 0) - (bz || 0);
-    return Math.sqrt(dx * dx + dy * dy + dz * dz);
+  dist(x, y, z, w) {
+    if (typeof x != "number" && x.x != undefined) {
+      return this.dist(x.x, x.y, x.z, x.w);
+    }
+    let sum = 0;
+    let dx = this.x - x;
+    sum += dx * dx;
+    let dy = (this.y || 0) - (y || 0);
+    sum += dy * dy;
+    let dz = (this.z || 0) - (z || 0);
+    sum += dz * dz;
+    let dw = (this.w || 0) - (w || 0);
+    sum += dw * dw;
+    return Math.sqrt(sum);
   }
-
-  dist(vec) {
-    return this.distXYZ(vec.x, vec.y, vec.z);
+  distance(x, y, z, w) {
+    return this.dist(x, y, z, w);
   }
-  distance(vec) {
-    return this.dist(vec);
-  }
-  distanceTo(vec) {
-    return this.dist(vec);
+  distanceTo(x, y, z, w) {
+    return this.dist(x, y, z, w);
   }
   length() {
-    return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+    return Math.sqrt(
+      this.x * this.x +
+        this.y * this.y +
+        (this.z || 0) * (this.z || 0) +
+        (this.w || 0) * (this.w || 0)
+    );
   }
 
   setLength(l) {
@@ -102,16 +165,21 @@ class Vector {
     return this;
   }
   limit(l) {
-    if (this.length() > l) this.setLength(l);
+    let length = this.length();
+    if (length > l) this.mult(length / l);
     return this;
   }
 
   // 2d only
   heading() {
+    if (!this.is2D) console.warn("heading() only supports 2D vectors");
+
     return Math.atan2(this.x, this.y);
   }
   // 2d only
   rotate(a) {
+    if (!this.is2D) console.warn("rotate(a) only supports 2D vectors");
+
     let ca = Math.cos(a);
     let sa = Math.sin(a);
     this.set(ca * this.x - sa * this.y, sa * this.x + ca * this.y);
@@ -127,7 +195,9 @@ class Vector {
     return this.angleBetween(vec);
   }
   equals(vec) {
-    return this.x == vec.x && this.y == vec.y && this.z == vec.z;
+    return (
+      this.x == vec.x && this.y == vec.y && this.z == vec.z && this.w == vec.w
+    );
   }
 
   normalize() {
@@ -142,13 +212,14 @@ class Vector {
     return this;
   }
   manhattanLength() {
-    return this.x + this.y + this.z;
+    return this.x + this.y + (this.z || 0) + (this.w || 0);
   }
   lerp(vec, a) {
     let dx = vec.x - this.x;
     let dy = vec.y - this.y;
     let dz = vec.z - this.z;
-    this.add(dx * a, dy * a, dz * a);
+    let dw = vec.w - this.w;
+    this.add(dx * a, dy * a, dz * a, dw * a);
     return this;
   }
 
@@ -161,10 +232,10 @@ class Vector {
 
   // random 2d vector with length between 0 and 1
   // or set length
-  static random2D(l) {
-    let v = new Vector(Math.random() * 2 - 1, Math.random() * 2 - 1);
+  static random2D(l, random = Math.random) {
+    let v = new Vector(random() * 2 - 1, random() * 2 - 1);
     while (v.length() > 1) {
-      v.set(Math.random() * 2 - 1, Math.random() * 2 - 1);
+      v.set(random() * 2 - 1, random() * 2 - 1);
     }
     if (l) v.setLength(l);
     return v;
@@ -172,18 +243,10 @@ class Vector {
 
   // random 3d vector with length between 0 and 1
   // or set length
-  static random3D(l) {
-    let v = new Vector(
-      Math.random() * 2 - 1,
-      Math.random() * 2 - 1,
-      Math.random() * 2 - 1
-    );
+  static random3D(l, random = Math.random) {
+    let v = new Vector(random() * 2 - 1, random() * 2 - 1, random() * 2 - 1);
     while (v.length() > 1) {
-      v.set(
-        Math.random() * 2 - 1,
-        Math.random() * 2 - 1,
-        Math.random() * 2 - 1
-      );
+      v.set(random() * 2 - 1, random() * 2 - 1, random() * 2 - 1);
     }
     if (l) v.setLength(l);
     return v;
@@ -202,324 +265,519 @@ class Vector {
   }
 }
 
-/*
- *
- * simplex-noise.js from https://github.com/jwagner/simplex-noise.js
- *
+/**
+ * every-noise.js
  */
-!(function () {
-  "use strict";
-  var r = 0.5 * (Math.sqrt(3) - 1),
-    e = (3 - Math.sqrt(3)) / 6,
-    t = 1 / 6,
-    a = (Math.sqrt(5) - 1) / 4,
-    o = (5 - Math.sqrt(5)) / 20;
-  function i(r) {
-    var e;
-    (e =
-      "function" == typeof r
-        ? r
-        : r
-        ? (function () {
-            var r = 0,
-              e = 0,
-              t = 0,
-              a = 1,
-              o =
-                ((i = 4022871197),
-                function (r) {
-                  r = r.toString();
-                  for (var e = 0; e < r.length; e++) {
-                    var t = 0.02519603282416938 * (i += r.charCodeAt(e));
-                    (t -= i = t >>> 0),
-                      (i = (t *= i) >>> 0),
-                      (i += 4294967296 * (t -= i));
-                  }
-                  return 2.3283064365386963e-10 * (i >>> 0);
-                });
-            var i;
-            (r = o(" ")), (e = o(" ")), (t = o(" "));
-            for (var n = 0; n < arguments.length; n++)
-              (r -= o(arguments[n])) < 0 && (r += 1),
-                (e -= o(arguments[n])) < 0 && (e += 1),
-                (t -= o(arguments[n])) < 0 && (t += 1);
-            return (
-              (o = null),
-              function () {
-                var o = 2091639 * r + 2.3283064365386963e-10 * a;
-                return (r = e), (e = t), (t = o - (a = 0 | o));
-              }
-            );
-          })(r)
-        : Math.random),
-      (this.p = n(e)),
-      (this.perm = new Uint8Array(512)),
-      (this.permMod12 = new Uint8Array(512));
-    for (var t = 0; t < 512; t++)
-      (this.perm[t] = this.p[255 & t]), (this.permMod12[t] = this.perm[t] % 12);
-  }
-  function n(r) {
-    var e,
-      t = new Uint8Array(256);
-    for (e = 0; e < 256; e++) t[e] = e;
-    for (e = 0; e < 255; e++) {
-      var a = e + ~~(r() * (256 - e)),
-        o = t[e];
-      (t[e] = t[a]), (t[a] = o);
-    }
-    return t;
-  }
-  (i.prototype = {
-    grad3: new Float32Array([
+class Noise {
+  static defaultUp = new Vector(0, 1, 0);
+
+  /**
+   * simplex-noise.js by Jonas Wagner
+   *
+   * version 4.0.1 slightly modified
+   */
+  static Simplex = (function () {
+    /*
+ * A fast javascript implementation of simplex noise by Jonas Wagner
+
+Based on a speed-improved simplex noise algorithm for 2D, 3D and 4D in Java.
+Which is based on example code by Stefan Gustavson (stegu@itn.liu.se).
+With Optimisations by Peter Eastman (peastman@drizzle.stanford.edu).
+Better rank ordering method by Stefan Gustavson in 2012.
+
+ Copyright (c) 2022 Jonas Wagner
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+ */
+    // these #__PURE__ comments help uglifyjs with dead code removal
+    //
+    const F2 = /*#__PURE__*/ 0.5 * (Math.sqrt(3.0) - 1.0);
+    const G2 = /*#__PURE__*/ (3.0 - Math.sqrt(3.0)) / 6.0;
+    const F3 = 1.0 / 3.0;
+    const G3 = 1.0 / 6.0;
+    const F4 = /*#__PURE__*/ (Math.sqrt(5.0) - 1.0) / 4.0;
+    const G4 = /*#__PURE__*/ (5.0 - Math.sqrt(5.0)) / 20.0;
+    // I'm really not sure why this | 0 (basically a coercion to int)
+    // is making this faster but I get ~5 million ops/sec more on the
+    // benchmarks across the board or a ~10% speedup.
+    const fastFloor = (x) => Math.floor(x) | 0;
+    const grad2 = /*#__PURE__*/ new Float64Array([
+      1, 1, -1, 1, 1, -1, -1, -1, 1, 0, -1, 0, 1, 0, -1, 0, 0, 1, 0, -1, 0, 1,
+      0, -1,
+    ]);
+    // double seems to be faster than single or int's
+    // probably because most operations are in double precision
+    const grad3 = /*#__PURE__*/ new Float64Array([
       1, 1, 0, -1, 1, 0, 1, -1, 0, -1, -1, 0, 1, 0, 1, -1, 0, 1, 1, 0, -1, -1,
       0, -1, 0, 1, 1, 0, -1, 1, 0, 1, -1, 0, -1, -1,
-    ]),
-    grad4: new Float32Array([
+    ]);
+    // double is a bit quicker here as well
+    const grad4 = /*#__PURE__*/ new Float64Array([
       0, 1, 1, 1, 0, 1, 1, -1, 0, 1, -1, 1, 0, 1, -1, -1, 0, -1, 1, 1, 0, -1, 1,
       -1, 0, -1, -1, 1, 0, -1, -1, -1, 1, 0, 1, 1, 1, 0, 1, -1, 1, 0, -1, 1, 1,
       0, -1, -1, -1, 0, 1, 1, -1, 0, 1, -1, -1, 0, -1, 1, -1, 0, -1, -1, 1, 1,
       0, 1, 1, 1, 0, -1, 1, -1, 0, 1, 1, -1, 0, -1, -1, 1, 0, 1, -1, 1, 0, -1,
       -1, -1, 0, 1, -1, -1, 0, -1, 1, 1, 1, 0, 1, 1, -1, 0, 1, -1, 1, 0, 1, -1,
       -1, 0, -1, 1, 1, 0, -1, 1, -1, 0, -1, -1, 1, 0, -1, -1, -1, 0,
-    ]),
-    noise2D: function (t, a) {
-      var o,
-        i,
-        n = this.permMod12,
-        f = this.perm,
-        s = this.grad3,
-        v = 0,
-        h = 0,
-        l = 0,
-        u = (t + a) * r,
-        d = Math.floor(t + u),
-        p = Math.floor(a + u),
-        M = (d + p) * e,
-        m = t - (d - M),
-        c = a - (p - M);
-      m > c ? ((o = 1), (i = 0)) : ((o = 0), (i = 1));
-      var y = m - o + e,
-        w = c - i + e,
-        g = m - 1 + 2 * e,
-        A = c - 1 + 2 * e,
-        x = 255 & d,
-        q = 255 & p,
-        D = 0.5 - m * m - c * c;
-      if (D >= 0) {
-        var S = 3 * n[x + f[q]];
-        v = (D *= D) * D * (s[S] * m + s[S + 1] * c);
+    ]);
+    /**
+     * Creates a 2D noise function
+     * @param random the random function that will be used to build the permutation table
+     * @returns {NoiseFunction2D}
+     */
+    function createNoise2D(random = Math.random) {
+      const perm = buildPermutationTable(random);
+      // precalculating this yields a little ~3% performance improvement.
+      const permGrad2x = new Float64Array(perm).map((v) => grad2[(v % 12) * 2]);
+      const permGrad2y = new Float64Array(perm).map(
+        (v) => grad2[(v % 12) * 2 + 1]
+      );
+      return function noise2D(x, y) {
+        // if(!isFinite(x) || !isFinite(y)) return 0;
+        let n0 = 0; // Noise contributions from the three corners
+        let n1 = 0;
+        let n2 = 0;
+        // Skew the input space to determine which simplex cell we're in
+        const s = (x + y) * F2; // Hairy factor for 2D
+        const i = fastFloor(x + s);
+        const j = fastFloor(y + s);
+        const t = (i + j) * G2;
+        const X0 = i - t; // Unskew the cell origin back to (x,y) space
+        const Y0 = j - t;
+        const x0 = x - X0; // The x,y distances from the cell origin
+        const y0 = y - Y0;
+        // For the 2D case, the simplex shape is an equilateral triangle.
+        // Determine which simplex we are in.
+        let i1, j1; // Offsets for second (middle) corner of simplex in (i,j) coords
+        if (x0 > y0) {
+          i1 = 1;
+          j1 = 0;
+        } // lower triangle, XY order: (0,0)->(1,0)->(1,1)
+        else {
+          i1 = 0;
+          j1 = 1;
+        } // upper triangle, YX order: (0,0)->(0,1)->(1,1)
+        // A step of (1,0) in (i,j) means a step of (1-c,-c) in (x,y), and
+        // a step of (0,1) in (i,j) means a step of (-c,1-c) in (x,y), where
+        // c = (3-sqrt(3))/6
+        const x1 = x0 - i1 + G2; // Offsets for middle corner in (x,y) unskewed coords
+        const y1 = y0 - j1 + G2;
+        const x2 = x0 - 1.0 + 2.0 * G2; // Offsets for last corner in (x,y) unskewed coords
+        const y2 = y0 - 1.0 + 2.0 * G2;
+        // Work out the hashed gradient indices of the three simplex corners
+        const ii = i & 255;
+        const jj = j & 255;
+        // Calculate the contribution from the three corners
+        let t0 = 0.5 - x0 * x0 - y0 * y0;
+        if (t0 >= 0) {
+          const gi0 = ii + perm[jj];
+          const g0x = permGrad2x[gi0];
+          const g0y = permGrad2y[gi0];
+          t0 *= t0;
+          // n0 = t0 * t0 * (grad2[gi0] * x0 + grad2[gi0 + 1] * y0); // (x,y) of grad3 used for 2D gradient
+          n0 = t0 * t0 * (g0x * x0 + g0y * y0);
+        }
+        let t1 = 0.5 - x1 * x1 - y1 * y1;
+        if (t1 >= 0) {
+          const gi1 = ii + i1 + perm[jj + j1];
+          const g1x = permGrad2x[gi1];
+          const g1y = permGrad2y[gi1];
+          t1 *= t1;
+          // n1 = t1 * t1 * (grad2[gi1] * x1 + grad2[gi1 + 1] * y1);
+          n1 = t1 * t1 * (g1x * x1 + g1y * y1);
+        }
+        let t2 = 0.5 - x2 * x2 - y2 * y2;
+        if (t2 >= 0) {
+          const gi2 = ii + 1 + perm[jj + 1];
+          const g2x = permGrad2x[gi2];
+          const g2y = permGrad2y[gi2];
+          t2 *= t2;
+          // n2 = t2 * t2 * (grad2[gi2] * x2 + grad2[gi2 + 1] * y2);
+          n2 = t2 * t2 * (g2x * x2 + g2y * y2);
+        }
+        // Add contributions from each corner to get the final noise value.
+        // The result is scaled to return values in the interval [-1,1].
+        return 70.0 * (n0 + n1 + n2);
+      };
+    }
+    /**
+     * Creates a 3D noise function
+     * @param random the random function that will be used to build the permutation table
+     * @returns {NoiseFunction3D}
+     */
+    function createNoise3D(random = Math.random) {
+      const perm = buildPermutationTable(random);
+      // precalculating these seems to yield a speedup of over 15%
+      const permGrad3x = new Float64Array(perm).map((v) => grad3[(v % 12) * 3]);
+      const permGrad3y = new Float64Array(perm).map(
+        (v) => grad3[(v % 12) * 3 + 1]
+      );
+      const permGrad3z = new Float64Array(perm).map(
+        (v) => grad3[(v % 12) * 3 + 2]
+      );
+      return function noise3D(x, y, z) {
+        let n0, n1, n2, n3; // Noise contributions from the four corners
+        // Skew the input space to determine which simplex cell we're in
+        const s = (x + y + z) * F3; // Very nice and simple skew factor for 3D
+        const i = fastFloor(x + s);
+        const j = fastFloor(y + s);
+        const k = fastFloor(z + s);
+        const t = (i + j + k) * G3;
+        const X0 = i - t; // Unskew the cell origin back to (x,y,z) space
+        const Y0 = j - t;
+        const Z0 = k - t;
+        const x0 = x - X0; // The x,y,z distances from the cell origin
+        const y0 = y - Y0;
+        const z0 = z - Z0;
+        // For the 3D case, the simplex shape is a slightly irregular tetrahedron.
+        // Determine which simplex we are in.
+        let i1, j1, k1; // Offsets for second corner of simplex in (i,j,k) coords
+        let i2, j2, k2; // Offsets for third corner of simplex in (i,j,k) coords
+        if (x0 >= y0) {
+          if (y0 >= z0) {
+            i1 = 1;
+            j1 = 0;
+            k1 = 0;
+            i2 = 1;
+            j2 = 1;
+            k2 = 0;
+          } // X Y Z order
+          else if (x0 >= z0) {
+            i1 = 1;
+            j1 = 0;
+            k1 = 0;
+            i2 = 1;
+            j2 = 0;
+            k2 = 1;
+          } // X Z Y order
+          else {
+            i1 = 0;
+            j1 = 0;
+            k1 = 1;
+            i2 = 1;
+            j2 = 0;
+            k2 = 1;
+          } // Z X Y order
+        } else {
+          // x0<y0
+          if (y0 < z0) {
+            i1 = 0;
+            j1 = 0;
+            k1 = 1;
+            i2 = 0;
+            j2 = 1;
+            k2 = 1;
+          } // Z Y X order
+          else if (x0 < z0) {
+            i1 = 0;
+            j1 = 1;
+            k1 = 0;
+            i2 = 0;
+            j2 = 1;
+            k2 = 1;
+          } // Y Z X order
+          else {
+            i1 = 0;
+            j1 = 1;
+            k1 = 0;
+            i2 = 1;
+            j2 = 1;
+            k2 = 0;
+          } // Y X Z order
+        }
+        // A step of (1,0,0) in (i,j,k) means a step of (1-c,-c,-c) in (x,y,z),
+        // a step of (0,1,0) in (i,j,k) means a step of (-c,1-c,-c) in (x,y,z), and
+        // a step of (0,0,1) in (i,j,k) means a step of (-c,-c,1-c) in (x,y,z), where
+        // c = 1/6.
+        const x1 = x0 - i1 + G3; // Offsets for second corner in (x,y,z) coords
+        const y1 = y0 - j1 + G3;
+        const z1 = z0 - k1 + G3;
+        const x2 = x0 - i2 + 2.0 * G3; // Offsets for third corner in (x,y,z) coords
+        const y2 = y0 - j2 + 2.0 * G3;
+        const z2 = z0 - k2 + 2.0 * G3;
+        const x3 = x0 - 1.0 + 3.0 * G3; // Offsets for last corner in (x,y,z) coords
+        const y3 = y0 - 1.0 + 3.0 * G3;
+        const z3 = z0 - 1.0 + 3.0 * G3;
+        // Work out the hashed gradient indices of the four simplex corners
+        const ii = i & 255;
+        const jj = j & 255;
+        const kk = k & 255;
+        // Calculate the contribution from the four corners
+        let t0 = 0.6 - x0 * x0 - y0 * y0 - z0 * z0;
+        if (t0 < 0) n0 = 0.0;
+        else {
+          const gi0 = ii + perm[jj + perm[kk]];
+          t0 *= t0;
+          n0 =
+            t0 *
+            t0 *
+            (permGrad3x[gi0] * x0 +
+              permGrad3y[gi0] * y0 +
+              permGrad3z[gi0] * z0);
+        }
+        let t1 = 0.6 - x1 * x1 - y1 * y1 - z1 * z1;
+        if (t1 < 0) n1 = 0.0;
+        else {
+          const gi1 = ii + i1 + perm[jj + j1 + perm[kk + k1]];
+          t1 *= t1;
+          n1 =
+            t1 *
+            t1 *
+            (permGrad3x[gi1] * x1 +
+              permGrad3y[gi1] * y1 +
+              permGrad3z[gi1] * z1);
+        }
+        let t2 = 0.6 - x2 * x2 - y2 * y2 - z2 * z2;
+        if (t2 < 0) n2 = 0.0;
+        else {
+          const gi2 = ii + i2 + perm[jj + j2 + perm[kk + k2]];
+          t2 *= t2;
+          n2 =
+            t2 *
+            t2 *
+            (permGrad3x[gi2] * x2 +
+              permGrad3y[gi2] * y2 +
+              permGrad3z[gi2] * z2);
+        }
+        let t3 = 0.6 - x3 * x3 - y3 * y3 - z3 * z3;
+        if (t3 < 0) n3 = 0.0;
+        else {
+          const gi3 = ii + 1 + perm[jj + 1 + perm[kk + 1]];
+          t3 *= t3;
+          n3 =
+            t3 *
+            t3 *
+            (permGrad3x[gi3] * x3 +
+              permGrad3y[gi3] * y3 +
+              permGrad3z[gi3] * z3);
+        }
+        // Add contributions from each corner to get the final noise value.
+        // The result is scaled to stay just inside [-1,1]
+        return 32.0 * (n0 + n1 + n2 + n3);
+      };
+    }
+    /**
+     * Creates a 4D noise function
+     * @param random the random function that will be used to build the permutation table
+     * @returns {NoiseFunction4D}
+     */
+    function createNoise4D(random = Math.random) {
+      const perm = buildPermutationTable(random);
+      // precalculating these leads to a ~10% speedup
+      const permGrad4x = new Float64Array(perm).map((v) => grad4[(v % 32) * 4]);
+      const permGrad4y = new Float64Array(perm).map(
+        (v) => grad4[(v % 32) * 4 + 1]
+      );
+      const permGrad4z = new Float64Array(perm).map(
+        (v) => grad4[(v % 32) * 4 + 2]
+      );
+      const permGrad4w = new Float64Array(perm).map(
+        (v) => grad4[(v % 32) * 4 + 3]
+      );
+      return function noise4D(x, y, z, w) {
+        let n0, n1, n2, n3, n4; // Noise contributions from the five corners
+        // Skew the (x,y,z,w) space to determine which cell of 24 simplices we're in
+        const s = (x + y + z + w) * F4; // Factor for 4D skewing
+        const i = fastFloor(x + s);
+        const j = fastFloor(y + s);
+        const k = fastFloor(z + s);
+        const l = fastFloor(w + s);
+        const t = (i + j + k + l) * G4; // Factor for 4D unskewing
+        const X0 = i - t; // Unskew the cell origin back to (x,y,z,w) space
+        const Y0 = j - t;
+        const Z0 = k - t;
+        const W0 = l - t;
+        const x0 = x - X0; // The x,y,z,w distances from the cell origin
+        const y0 = y - Y0;
+        const z0 = z - Z0;
+        const w0 = w - W0;
+        // For the 4D case, the simplex is a 4D shape I won't even try to describe.
+        // To find out which of the 24 possible simplices we're in, we need to
+        // determine the magnitude ordering of x0, y0, z0 and w0.
+        // Six pair-wise comparisons are performed between each possible pair
+        // of the four coordinates, and the results are used to rank the numbers.
+        let rankx = 0;
+        let ranky = 0;
+        let rankz = 0;
+        let rankw = 0;
+        if (x0 > y0) rankx++;
+        else ranky++;
+        if (x0 > z0) rankx++;
+        else rankz++;
+        if (x0 > w0) rankx++;
+        else rankw++;
+        if (y0 > z0) ranky++;
+        else rankz++;
+        if (y0 > w0) ranky++;
+        else rankw++;
+        if (z0 > w0) rankz++;
+        else rankw++;
+        // simplex[c] is a 4-vector with the numbers 0, 1, 2 and 3 in some order.
+        // Many values of c will never occur, since e.g. x>y>z>w makes x<z, y<w and x<w
+        // impossible. Only the 24 indices which have non-zero entries make any sense.
+        // We use a thresholding to set the coordinates in turn from the largest magnitude.
+        // Rank 3 denotes the largest coordinate.
+        // Rank 2 denotes the second largest coordinate.
+        // Rank 1 denotes the second smallest coordinate.
+        // The integer offsets for the second simplex corner
+        const i1 = rankx >= 3 ? 1 : 0;
+        const j1 = ranky >= 3 ? 1 : 0;
+        const k1 = rankz >= 3 ? 1 : 0;
+        const l1 = rankw >= 3 ? 1 : 0;
+        // The integer offsets for the third simplex corner
+        const i2 = rankx >= 2 ? 1 : 0;
+        const j2 = ranky >= 2 ? 1 : 0;
+        const k2 = rankz >= 2 ? 1 : 0;
+        const l2 = rankw >= 2 ? 1 : 0;
+        // The integer offsets for the fourth simplex corner
+        const i3 = rankx >= 1 ? 1 : 0;
+        const j3 = ranky >= 1 ? 1 : 0;
+        const k3 = rankz >= 1 ? 1 : 0;
+        const l3 = rankw >= 1 ? 1 : 0;
+        // The fifth corner has all coordinate offsets = 1, so no need to compute that.
+        const x1 = x0 - i1 + G4; // Offsets for second corner in (x,y,z,w) coords
+        const y1 = y0 - j1 + G4;
+        const z1 = z0 - k1 + G4;
+        const w1 = w0 - l1 + G4;
+        const x2 = x0 - i2 + 2.0 * G4; // Offsets for third corner in (x,y,z,w) coords
+        const y2 = y0 - j2 + 2.0 * G4;
+        const z2 = z0 - k2 + 2.0 * G4;
+        const w2 = w0 - l2 + 2.0 * G4;
+        const x3 = x0 - i3 + 3.0 * G4; // Offsets for fourth corner in (x,y,z,w) coords
+        const y3 = y0 - j3 + 3.0 * G4;
+        const z3 = z0 - k3 + 3.0 * G4;
+        const w3 = w0 - l3 + 3.0 * G4;
+        const x4 = x0 - 1.0 + 4.0 * G4; // Offsets for last corner in (x,y,z,w) coords
+        const y4 = y0 - 1.0 + 4.0 * G4;
+        const z4 = z0 - 1.0 + 4.0 * G4;
+        const w4 = w0 - 1.0 + 4.0 * G4;
+        // Work out the hashed gradient indices of the five simplex corners
+        const ii = i & 255;
+        const jj = j & 255;
+        const kk = k & 255;
+        const ll = l & 255;
+        // Calculate the contribution from the five corners
+        let t0 = 0.6 - x0 * x0 - y0 * y0 - z0 * z0 - w0 * w0;
+        if (t0 < 0) n0 = 0.0;
+        else {
+          const gi0 = ii + perm[jj + perm[kk + perm[ll]]];
+          t0 *= t0;
+          n0 =
+            t0 *
+            t0 *
+            (permGrad4x[gi0] * x0 +
+              permGrad4y[gi0] * y0 +
+              permGrad4z[gi0] * z0 +
+              permGrad4w[gi0] * w0);
+        }
+        let t1 = 0.6 - x1 * x1 - y1 * y1 - z1 * z1 - w1 * w1;
+        if (t1 < 0) n1 = 0.0;
+        else {
+          const gi1 = ii + i1 + perm[jj + j1 + perm[kk + k1 + perm[ll + l1]]];
+          t1 *= t1;
+          n1 =
+            t1 *
+            t1 *
+            (permGrad4x[gi1] * x1 +
+              permGrad4y[gi1] * y1 +
+              permGrad4z[gi1] * z1 +
+              permGrad4w[gi1] * w1);
+        }
+        let t2 = 0.6 - x2 * x2 - y2 * y2 - z2 * z2 - w2 * w2;
+        if (t2 < 0) n2 = 0.0;
+        else {
+          const gi2 = ii + i2 + perm[jj + j2 + perm[kk + k2 + perm[ll + l2]]];
+          t2 *= t2;
+          n2 =
+            t2 *
+            t2 *
+            (permGrad4x[gi2] * x2 +
+              permGrad4y[gi2] * y2 +
+              permGrad4z[gi2] * z2 +
+              permGrad4w[gi2] * w2);
+        }
+        let t3 = 0.6 - x3 * x3 - y3 * y3 - z3 * z3 - w3 * w3;
+        if (t3 < 0) n3 = 0.0;
+        else {
+          const gi3 = ii + i3 + perm[jj + j3 + perm[kk + k3 + perm[ll + l3]]];
+          t3 *= t3;
+          n3 =
+            t3 *
+            t3 *
+            (permGrad4x[gi3] * x3 +
+              permGrad4y[gi3] * y3 +
+              permGrad4z[gi3] * z3 +
+              permGrad4w[gi3] * w3);
+        }
+        let t4 = 0.6 - x4 * x4 - y4 * y4 - z4 * z4 - w4 * w4;
+        if (t4 < 0) n4 = 0.0;
+        else {
+          const gi4 = ii + 1 + perm[jj + 1 + perm[kk + 1 + perm[ll + 1]]];
+          t4 *= t4;
+          n4 =
+            t4 *
+            t4 *
+            (permGrad4x[gi4] * x4 +
+              permGrad4y[gi4] * y4 +
+              permGrad4z[gi4] * z4 +
+              permGrad4w[gi4] * w4);
+        }
+        // Sum up and scale the result to cover the range [-1,1]
+        return 27.0 * (n0 + n1 + n2 + n3 + n4);
+      };
+    }
+    /**
+     * Builds a random permutation table.
+     * This is exported only for (internal) testing purposes.
+     * Do not rely on this export.
+     * @private
+     */
+    function buildPermutationTable(random) {
+      const tableSize = 512;
+      const p = new Uint8Array(tableSize);
+      for (let i = 0; i < tableSize / 2; i++) {
+        p[i] = i;
       }
-      var U = 0.5 - y * y - w * w;
-      if (U >= 0) {
-        var b = 3 * n[x + o + f[q + i]];
-        h = (U *= U) * U * (s[b] * y + s[b + 1] * w);
+      for (let i = 0; i < tableSize / 2 - 1; i++) {
+        const r = i + ~~(random() * (256 - i));
+        const aux = p[i];
+        p[i] = p[r];
+        p[r] = aux;
       }
-      var F = 0.5 - g * g - A * A;
-      if (F >= 0) {
-        var N = 3 * n[x + 1 + f[q + 1]];
-        l = (F *= F) * F * (s[N] * g + s[N + 1] * A);
+      for (let i = 256; i < tableSize; i++) {
+        p[i] = p[i - 256];
       }
-      return 70 * (v + h + l);
-    },
-    noise3D: function (r, e, a) {
-      var o,
-        i,
-        n,
-        f,
-        s,
-        v,
-        h,
-        l,
-        u,
-        d,
-        p = this.permMod12,
-        M = this.perm,
-        m = this.grad3,
-        c = (r + e + a) * (1 / 3),
-        y = Math.floor(r + c),
-        w = Math.floor(e + c),
-        g = Math.floor(a + c),
-        A = (y + w + g) * t,
-        x = r - (y - A),
-        q = e - (w - A),
-        D = a - (g - A);
-      x >= q
-        ? q >= D
-          ? ((s = 1), (v = 0), (h = 0), (l = 1), (u = 1), (d = 0))
-          : x >= D
-          ? ((s = 1), (v = 0), (h = 0), (l = 1), (u = 0), (d = 1))
-          : ((s = 0), (v = 0), (h = 1), (l = 1), (u = 0), (d = 1))
-        : q < D
-        ? ((s = 0), (v = 0), (h = 1), (l = 0), (u = 1), (d = 1))
-        : x < D
-        ? ((s = 0), (v = 1), (h = 0), (l = 0), (u = 1), (d = 1))
-        : ((s = 0), (v = 1), (h = 0), (l = 1), (u = 1), (d = 0));
-      var S = x - s + t,
-        U = q - v + t,
-        b = D - h + t,
-        F = x - l + 2 * t,
-        N = q - u + 2 * t,
-        C = D - d + 2 * t,
-        P = x - 1 + 0.5,
-        T = q - 1 + 0.5,
-        _ = D - 1 + 0.5,
-        j = 255 & y,
-        k = 255 & w,
-        z = 255 & g,
-        B = 0.6 - x * x - q * q - D * D;
-      if (B < 0) o = 0;
-      else {
-        var E = 3 * p[j + M[k + M[z]]];
-        o = (B *= B) * B * (m[E] * x + m[E + 1] * q + m[E + 2] * D);
-      }
-      var G = 0.6 - S * S - U * U - b * b;
-      if (G < 0) i = 0;
-      else {
-        var H = 3 * p[j + s + M[k + v + M[z + h]]];
-        i = (G *= G) * G * (m[H] * S + m[H + 1] * U + m[H + 2] * b);
-      }
-      var I = 0.6 - F * F - N * N - C * C;
-      if (I < 0) n = 0;
-      else {
-        var J = 3 * p[j + l + M[k + u + M[z + d]]];
-        n = (I *= I) * I * (m[J] * F + m[J + 1] * N + m[J + 2] * C);
-      }
-      var K = 0.6 - P * P - T * T - _ * _;
-      if (K < 0) f = 0;
-      else {
-        var L = 3 * p[j + 1 + M[k + 1 + M[z + 1]]];
-        f = (K *= K) * K * (m[L] * P + m[L + 1] * T + m[L + 2] * _);
-      }
-      return 32 * (o + i + n + f);
-    },
-    noise4D: function (r, e, t, i) {
-      var n,
-        f,
-        s,
-        v,
-        h,
-        l,
-        u,
-        d,
-        p,
-        M,
-        m,
-        c,
-        y,
-        w,
-        g,
-        A,
-        x,
-        q = this.perm,
-        D = this.grad4,
-        S = (r + e + t + i) * a,
-        U = Math.floor(r + S),
-        b = Math.floor(e + S),
-        F = Math.floor(t + S),
-        N = Math.floor(i + S),
-        C = (U + b + F + N) * o,
-        P = r - (U - C),
-        T = e - (b - C),
-        _ = t - (F - C),
-        j = i - (N - C),
-        k = 0,
-        z = 0,
-        B = 0,
-        E = 0;
-      P > T ? k++ : z++,
-        P > _ ? k++ : B++,
-        P > j ? k++ : E++,
-        T > _ ? z++ : B++,
-        T > j ? z++ : E++,
-        _ > j ? B++ : E++;
-      var G = P - (l = k >= 3 ? 1 : 0) + o,
-        H = T - (u = z >= 3 ? 1 : 0) + o,
-        I = _ - (d = B >= 3 ? 1 : 0) + o,
-        J = j - (p = E >= 3 ? 1 : 0) + o,
-        K = P - (M = k >= 2 ? 1 : 0) + 2 * o,
-        L = T - (m = z >= 2 ? 1 : 0) + 2 * o,
-        O = _ - (c = B >= 2 ? 1 : 0) + 2 * o,
-        Q = j - (y = E >= 2 ? 1 : 0) + 2 * o,
-        R = P - (w = k >= 1 ? 1 : 0) + 3 * o,
-        V = T - (g = z >= 1 ? 1 : 0) + 3 * o,
-        W = _ - (A = B >= 1 ? 1 : 0) + 3 * o,
-        X = j - (x = E >= 1 ? 1 : 0) + 3 * o,
-        Y = P - 1 + 4 * o,
-        Z = T - 1 + 4 * o,
-        $ = _ - 1 + 4 * o,
-        rr = j - 1 + 4 * o,
-        er = 255 & U,
-        tr = 255 & b,
-        ar = 255 & F,
-        or = 255 & N,
-        ir = 0.6 - P * P - T * T - _ * _ - j * j;
-      if (ir < 0) n = 0;
-      else {
-        var nr = (q[er + q[tr + q[ar + q[or]]]] % 32) * 4;
-        n =
-          (ir *= ir) *
-          ir *
-          (D[nr] * P + D[nr + 1] * T + D[nr + 2] * _ + D[nr + 3] * j);
-      }
-      var fr = 0.6 - G * G - H * H - I * I - J * J;
-      if (fr < 0) f = 0;
-      else {
-        var sr = (q[er + l + q[tr + u + q[ar + d + q[or + p]]]] % 32) * 4;
-        f =
-          (fr *= fr) *
-          fr *
-          (D[sr] * G + D[sr + 1] * H + D[sr + 2] * I + D[sr + 3] * J);
-      }
-      var vr = 0.6 - K * K - L * L - O * O - Q * Q;
-      if (vr < 0) s = 0;
-      else {
-        var hr = (q[er + M + q[tr + m + q[ar + c + q[or + y]]]] % 32) * 4;
-        s =
-          (vr *= vr) *
-          vr *
-          (D[hr] * K + D[hr + 1] * L + D[hr + 2] * O + D[hr + 3] * Q);
-      }
-      var lr = 0.6 - R * R - V * V - W * W - X * X;
-      if (lr < 0) v = 0;
-      else {
-        var ur = (q[er + w + q[tr + g + q[ar + A + q[or + x]]]] % 32) * 4;
-        v =
-          (lr *= lr) *
-          lr *
-          (D[ur] * R + D[ur + 1] * V + D[ur + 2] * W + D[ur + 3] * X);
-      }
-      var dr = 0.6 - Y * Y - Z * Z - $ * $ - rr * rr;
-      if (dr < 0) h = 0;
-      else {
-        var pr = (q[er + 1 + q[tr + 1 + q[ar + 1 + q[or + 1]]]] % 32) * 4;
-        h =
-          (dr *= dr) *
-          dr *
-          (D[pr] * Y + D[pr + 1] * Z + D[pr + 2] * $ + D[pr + 3] * rr);
-      }
-      return 27 * (n + f + s + v + h);
-    },
-  }),
-    (i._buildPermutationTable = n),
-    "undefined" != typeof define &&
-      define.amd &&
-      define(function () {
-        return i;
-      }),
-    "undefined" != typeof exports
-      ? (exports.SimplexNoise = i)
-      : "undefined" != typeof window && (window.SimplexNoise = i),
-    "undefined" != typeof module && (module.exports = i);
-})();
+      return p;
+    }
 
-function firstDefined(...arr) {
-  for (let i = 0; i < arr.length; i++) {
-    if (arr[i] !== undefined) return arr[i];
+    return {
+      createNoise2D: createNoise2D,
+      createNoise3D: createNoise3D,
+      createNoise4D: createNoise4D,
+    };
+  })();
+
+  static firstDefined(...arr) {
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i] !== undefined) return arr[i];
+    }
   }
-}
-
-class Noise {
-  static defaultUp = new Vector(0, 1, 0);
 
   /**
    * create new Noise object
@@ -560,37 +818,37 @@ class Noise {
 
     this.pos = new Vector(0, 0, 0);
 
-    this.scale = firstDefined(opts.scale, opts.scl, 1);
-    this.power = firstDefined(opts.power, opts.pow, 1);
+    this.scale = Noise.firstDefined(opts.scale, opts.scl, 1);
+    this.power = Noise.firstDefined(opts.power, opts.pow, 1);
 
-    this.shift = firstDefined(
+    this.shift = Noise.firstDefined(
       opts.shift,
       new Vector(opts.x || 0.357, opts.y || 0.579, opts.z || 0.739)
     );
 
     // fbm stuff
     // how many layers
-    this.octaves = firstDefined(opts.octaves, opts.oct, 0);
+    this.octaves = Noise.firstDefined(opts.octaves, opts.oct, 0);
     // how much to multiply amplitude per layer
-    this.gain = firstDefined(opts.gain, opts.persistence, opts.per, 0.5);
+    this.gain = Noise.firstDefined(opts.gain, opts.persistence, opts.per, 0.5);
     // how much to multiply scale per layer
-    this.lacunarity = firstDefined(opts.lacunarity, opts.lac, 2);
+    this.lacunarity = Noise.firstDefined(opts.lacunarity, opts.lac, 2);
 
     // how much previous layers influence amplitude of later layers
-    this.erosion = firstDefined(opts.erosion, opts.ero, 0);
+    this.erosion = Noise.firstDefined(opts.erosion, opts.ero, 0);
     // how much to move x, y, z to calculate derivative
     // (x2 - x1) / delta, (y2 - y1) / delta, (z2 - z1) / delta
-    this.delta = firstDefined(opts.delta, opts.del, 0.0001 * this.scale);
+    this.delta = Noise.firstDefined(opts.delta, opts.del, 0.0001 * this.scale);
 
     // amp is also only used for fbm
-    this.amp = firstDefined(opts.amplitude, opts.amp);
+    this.amp = Noise.firstDefined(opts.amplitude, opts.amp);
 
-    this.sharpness = firstDefined(opts.sharpness, opts.sharp, 0);
+    this.sharpness = Noise.firstDefined(opts.sharpness, opts.sharp, 0);
 
     this.steps = opts.steps;
 
-    this.min = firstDefined(opts.min, -1);
-    this.max = firstDefined(opts.max, 1);
+    this.min = Noise.firstDefined(opts.min, -1);
+    this.max = Noise.firstDefined(opts.max, 1);
 
     if (this.octaves > 0 || opts.layers != undefined) {
       this.layers = [];
@@ -617,7 +875,7 @@ class Noise {
         this.layers.push(n);
       }
     } else {
-      this.simplex = new SimplexNoise(this.seed);
+      this.simplex = Noise.Simplex.createNoise3D(); //this.seed);
     }
 
     if (opts.combine != undefined) {
@@ -628,7 +886,7 @@ class Noise {
 
     if (opts.warp != undefined) {
       this.warp = opts.warp;
-      this.checkValue("warp");
+
       if (opts.warpNoise) {
         this.warpNoise = opts.warpNoise;
         if (this.warpNoise.isNoise != true)
@@ -637,7 +895,6 @@ class Noise {
     }
     if (opts.warp2 != undefined) {
       this.warp2 = opts.warp2;
-      this.checkValue("warp2");
 
       if (opts.warpNoise2) {
         this.warpNoise2 = opts.warpNoise2;
@@ -835,7 +1092,7 @@ class Noise {
 
   setSeed(seed) {
     this._seed = seed || Math.random() * 100000;
-    if (this.simplex) this.simplex = new SimplexNoise(this._seed);
+    if (this.simplex) this.simplex = Noise.Simplex.createNoise3D(); //_seed);
     if (this.layers) {
       let i = 13;
       for (let l of this.layers) {
@@ -873,7 +1130,7 @@ class Noise {
     if (this.layers == undefined) {
       // if object has simplex noise return result of that
       if (this.simplex != undefined)
-        return this.simplex.noise3D(x * scale, y * scale, z * scale);
+        return this.simplex(x * scale, y * scale, z * scale);
       // no data
       return 0;
     }
