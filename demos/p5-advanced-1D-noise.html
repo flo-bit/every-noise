@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="../noise.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script>
+
+    <meta charset="utf-8" />
+  </head>
+  <style>
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+  <body style="background: black">
+    <script>
+      var nois;
+
+      var counter = 0;
+      function setup() {
+        createCanvas(windowWidth - 2, windowHeight - 2);
+        stroke(255);
+
+        nois = new Noise({
+          scl: 0.001,
+          octaves: 6,
+          warp: { min: 1, max: 100, scl: 0.001 },
+          sharpness: { scl: 0.0005 },
+          pow: { min: 0.5, max: 3, scl: 0.001 },
+
+          layers: [{}, { steps: { min: 0, max: 4, scl: 0.1, pow: 3 } }],
+          per: { min: 0.1, max: 0.8, scl: 0.0005 },
+          seed: 3,
+        });
+      }
+
+      function draw() {
+        background(0);
+        let stepSize = 0.5;
+        let lastY;
+        counter += deltaTime / 2;
+        for (let x = 0; x < width; x += stepSize) {
+          let v = nois.get(x + Math.floor(counter));
+          let y = map(v, -1, 1, height * 0.01, height * 0.99);
+          if (lastY) line(x, lastY, x + stepSize, y);
+          lastY = y;
+        }
+      }
+
+      function windowResized() {
+        resizeCanvas(windowWidth - 2, windowHeight - 2);
+      }
+    </script>
+  </body>
+</html>

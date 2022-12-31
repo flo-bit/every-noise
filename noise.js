@@ -47,8 +47,8 @@ class Vector {
     }
     this.x = x;
     this.y = y;
-    if (z != undefined && z != NaN) this.z = z;
-    if (w != undefined && w != NaN) this.w = w;
+    this.z = z;
+    this.w = w;
     return this;
   }
   add(x, y, z, w) {
@@ -223,6 +223,15 @@ class Vector {
     return this;
   }
 
+  stringDescription() {
+    let dimension = this.is2D ? "2D" : this.is3D ? "3D" : "4D";
+    let str = dimension + " vec (" + this.x + ", " + this.y;
+    if (this.z != undefined) str += ", " + this.z;
+    if (this.w != undefined) str += ", " + this.w;
+    str += ")";
+    return str;
+  }
+
   // 2d vector from angle and optional length (default length 1)
   static fromAngle2D(a, l) {
     let v = new Vector(Math.cos(a), Math.sin(a));
@@ -264,6 +273,234 @@ class Vector {
     return arr;
   }
 }
+
+/** Srand
+ * @param {number} seed
+ */
+(function () {
+  function r(e, n, t) {
+    function o(i, f) {
+      if (!n[i]) {
+        if (!e[i]) {
+          var c = "function" == typeof require && require;
+          if (!f && c) return c(i, !0);
+          if (u) return u(i, !0);
+          var a = new Error("Cannot find module '" + i + "'");
+          throw ((a.code = "MODULE_NOT_FOUND"), a);
+        }
+        var p = (n[i] = { exports: {} });
+        e[i][0].call(
+          p.exports,
+          function (r) {
+            var n = e[i][1][r];
+            return o(n || r);
+          },
+          p,
+          p.exports,
+          r,
+          e,
+          n,
+          t
+        );
+      }
+      return n[i].exports;
+    }
+    for (
+      var u = "function" == typeof require && require, i = 0;
+      i < t.length;
+      i++
+    )
+      o(t[i]);
+    return o;
+  }
+  return r;
+})()(
+  {
+    1: [
+      function (require, module, exports) {
+        /*!
+         * jsrand - https://github.com/DomenicoDeFelice/jsrand
+         *
+         * Copyright (c) 2014-2020 Domenico De Felice
+         * Released under the MIT License
+         *
+         * @license
+         */ "use strict";
+        function _toConsumableArray(a) {
+          return (
+            _arrayWithoutHoles(a) ||
+            _iterableToArray(a) ||
+            _unsupportedIterableToArray(a) ||
+            _nonIterableSpread()
+          );
+        }
+        function _nonIterableSpread() {
+          throw new TypeError(
+            "Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."
+          );
+        }
+        function _unsupportedIterableToArray(a, b) {
+          if (a) {
+            if ("string" == typeof a) return _arrayLikeToArray(a, b);
+            var c = Object.prototype.toString.call(a).slice(8, -1);
+            return (
+              "Object" === c && a.constructor && (c = a.constructor.name),
+              "Map" === c || "Set" === c
+                ? Array.from(a)
+                : "Arguments" === c ||
+                  /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(c)
+                ? _arrayLikeToArray(a, b)
+                : void 0
+            );
+          }
+        }
+        function _iterableToArray(a) {
+          if ("undefined" != typeof Symbol && Symbol.iterator in Object(a))
+            return Array.from(a);
+        }
+        function _arrayWithoutHoles(a) {
+          if (Array.isArray(a)) return _arrayLikeToArray(a);
+        }
+        function _arrayLikeToArray(a, b) {
+          (null == b || b > a.length) && (b = a.length);
+          for (var c = 0, d = Array(b); c < b; c++) d[c] = a[c];
+          return d;
+        }
+        function _typeof(a) {
+          "@babel/helpers - typeof";
+          return (
+            (_typeof =
+              "function" == typeof Symbol && "symbol" == typeof Symbol.iterator
+                ? function (a) {
+                    return typeof a;
+                  }
+                : function (a) {
+                    return a &&
+                      "function" == typeof Symbol &&
+                      a.constructor === Symbol &&
+                      a !== Symbol.prototype
+                      ? "symbol"
+                      : typeof a;
+                  }),
+            _typeof(a)
+          );
+        }
+        function Srand(a) {
+          null == a ? this.randomize() : this.seed(a);
+        }
+        (Srand.prototype = {}),
+          (Srand.seed = Srand.prototype.seed =
+            function (a) {
+              return null == a
+                ? this._seed
+                : ((this._mz = 123456789), (this._mw = this._seed = a));
+            }),
+          (Srand.randomize = Srand.prototype.randomize =
+            function () {
+              return this.seed(1 + Math.floor(4294967295 * Math.random()));
+            }),
+          (Srand.getState = Srand.prototype.getState =
+            function () {
+              return { seed: this._seed, mz: this._mz, mw: this._mw };
+            }),
+          (Srand.setState = Srand.prototype.setState =
+            function (a) {
+              if (
+                null == a ||
+                "object" !== _typeof(a) ||
+                "number" != typeof a.seed ||
+                "number" != typeof a.mz ||
+                "number" != typeof a.mw
+              )
+                throw new Error("Invalid state.");
+              (this._seed = a.seed), (this._mz = a.mz), (this._mw = a.mw);
+            }),
+          (Srand.random = Srand.prototype.random =
+            function () {
+              null == this._seed && this.randomize();
+              var a = this._mz,
+                b = this._mw;
+              (a = 4294967295 & (36969 * (65535 & a) + (a >> 16))),
+                (b = 4294967295 & (18e3 * (65535 & b) + (b >> 16))),
+                (this._mz = a),
+                (this._mw = b);
+              var c = (4294967295 & ((a << 16) + b)) / 4294967296;
+              return 0.5 + c;
+            }),
+          (Srand.inRange = Srand.prototype.inRange =
+            function (c, a) {
+              return c + this.random() * (a - c);
+            }),
+          (Srand.intInRange = Srand.prototype.intInRange =
+            function (a, b) {
+              return a + Math.floor(this.random() * (b - a + 1));
+            }),
+          (Srand.choice = Srand.prototype.choice =
+            function (a) {
+              if (0 === a.length)
+                throw new Error(
+                  "Cannot choose random element from empty array."
+                );
+              var b = this.intInRange(0, a.length - 1);
+              return a[b];
+            }),
+          (Srand.choices = Srand.prototype.choices =
+            function (a, b) {
+              for (var c = Array(b), d = 0; d < b; d++) c[d] = this.choice(a);
+              return c;
+            }),
+          (Srand.sample = Srand.prototype.sample =
+            function (a, b) {
+              if (b > a.length)
+                throw new Error("Sample size cannot exceed population size.");
+              if (b === a.length) return _toConsumableArray(a);
+              for (
+                var c, d = a.length - 1, e = Array(b), f = {}, g = 0;
+                g < b;
+                g++
+              ) {
+                do c = this.intInRange(0, d);
+                while (f[c]);
+                (e[g] = a[c]), (f[c] = !0);
+              }
+              return e;
+            }),
+          (Srand.shuffle = Srand.prototype.shuffle =
+            function (a) {
+              for (var d = a.length - 1; 0 < d; d--) {
+                var b = this.intInRange(0, d - 1),
+                  c = a[d];
+                (a[d] = a[b]), (a[b] = c);
+              }
+              return a;
+            }),
+          (Srand._oldSrand = void 0),
+          (Srand.noConflict = function () {
+            return Srand;
+          }),
+          (module.exports = Srand);
+      },
+      {},
+    ],
+    2: [
+      function (require, module, exports) {
+        "use strict";
+        var _jsrand = _interopRequireDefault(require("./jsrand.js"));
+        function _interopRequireDefault(a) {
+          return a && a.__esModule ? a : { default: a };
+        }
+        (_jsrand.default._oldSrand = window.Srand),
+          (_jsrand.default.noConflict = function () {
+            return (window.Srand = _jsrand.default._oldSrand), _jsrand.default;
+          }),
+          (window.Srand = _jsrand.default);
+      },
+      { "./jsrand.js": 1 },
+    ],
+  },
+  {},
+  [2]
+);
 
 /**
  * every-noise.js
@@ -784,14 +1021,16 @@ Better rank ordering method by Stefan Gustavson in 2012.
    *
    * @param {object} opts
    *
-   * @property {number} seed - seed for the noise
+   * @property {number} seed - seed for the noise, if not provided, Math.random() will be used,
+   * currently same results can only be guaranteed for newly created noise objects with same seed
+   * (as opposed to an old noise object where you changed the seed)
    *
    * @property {number} min - minimun value of noise
    * @property {number} max - maximum value of noise
    *
    * @property {number} scale - scale of the noise
    * @property {number} power - power of the noise (1 = linear, 2 = quadratic, etc)
-   * @property {Vector} shift - move noise in 3d space
+   * @property {Vector} shift - move noise in 2D, 3D or 4D space
    *
    * @property {number} octaves - number of layers for fbm noise
    * @property {number} gain - how much to multiply amplitude per layer
@@ -803,6 +1042,8 @@ Better rank ordering method by Stefan Gustavson in 2012.
    *
    * @property {number} warp - how much to warp the noise
    * @property {number} warpNoise - noise to warp the noise with
+   * @property {number} warp2 - second warp, can only be used if warp is used too
+   * @property {number} warpNoise2 - second warp noise
    *
    * @property {boolean} invert - invert the noise
    * @property {boolean} abs - absolute value of the noise
@@ -818,18 +1059,8 @@ Better rank ordering method by Stefan Gustavson in 2012.
 
     this.pos = new Vector(0, 0, 0);
 
-    this.scale = Noise.firstDefined(opts.scale, opts.scl, 1);
-    this.power = Noise.firstDefined(opts.power, opts.pow, 1);
-
-    this.shift = Noise.firstDefined(
-      opts.shift,
-      new Vector(
-        opts.x || 0.357,
-        opts.y || 0.579,
-        opts.z || 0.739,
-        opts.w || 0.123
-      )
-    );
+    this._seed = Noise.firstDefined(opts.seed, opts.s, Math.random() * 1000000);
+    this.prng = new Srand(this._seed);
 
     // fbm stuff
     // how many layers
@@ -838,6 +1069,50 @@ Better rank ordering method by Stefan Gustavson in 2012.
     this.gain = Noise.firstDefined(opts.gain, opts.persistence, opts.per, 0.5);
     // how much to multiply scale per layer
     this.lacunarity = Noise.firstDefined(opts.lacunarity, opts.lac, 2);
+
+    this.layers = undefined;
+    this.noise2D = undefined;
+    this.noise3D = undefined;
+    this.noise4D = undefined;
+
+    if (this.octaves > 0 || opts.layers != undefined) {
+      this.layers = [];
+      for (
+        let i = 0;
+        i < this.octaves || (opts.layers && i < opts.layers.length);
+        i++
+      ) {
+        let settings =
+          opts.layers != undefined && opts.layers.length > i
+            ? opts.layers[i]
+            : {};
+        settings.seed = this.prng.inRange(0, 1000000000);
+
+        if (opts.all) {
+          for (let k of Object.keys(opts.all)) {
+            settings[k] = opts.all[k];
+          }
+        }
+        if (settings.isNoise != true) {
+          this.layers.push(new Noise(settings));
+        } else {
+          this.layers.push(settings);
+        }
+      }
+    } else {
+      let random = this.prng.random.bind(this.prng);
+      this.noise2D = Noise.Simplex.createNoise2D(random);
+      this.noise3D = Noise.Simplex.createNoise3D(random);
+      this.noise4D = Noise.Simplex.createNoise4D(random);
+    }
+
+    this.scale = Noise.firstDefined(opts.scale, opts.scl, 1);
+    this.power = Noise.firstDefined(opts.power, opts.pow, 1);
+
+    this.shift = Noise.firstDefined(
+      opts.shift,
+      new Vector(opts.x || 0.357, opts.y || 0.579, opts.z || 0.248, opts.w || 0)
+    );
 
     // how much previous layers influence amplitude of later layers
     this.erosion = Noise.firstDefined(opts.erosion, opts.ero, 0);
@@ -855,51 +1130,24 @@ Better rank ordering method by Stefan Gustavson in 2012.
     this.min = Noise.firstDefined(opts.min, -1);
     this.max = Noise.firstDefined(opts.max, 1);
 
-    if (this.octaves > 0 || opts.layers != undefined) {
-      this.layers = [];
-      for (
-        let i = 0;
-        i <= this.octaves || (opts.layers && i < opts.layers.length);
-        i++
-      ) {
-        let settings =
-          opts.layers != undefined && opts.layers.length > i
-            ? opts.layers[i]
-            : {};
-        if (settings.seed == undefined) settings.seed = this.seed * 3 + i * 5;
-
-        let n = settings;
-        if (opts.all) {
-          for (let k of Object.keys(opts.all)) {
-            n[k] = opts.all[k];
-          }
-        }
-        if (n.isNoise != true) {
-          n = new Noise(settings);
-        }
-        this.layers.push(n);
-      }
-    } else {
-      this.noise2D = Noise.Simplex.createNoise2D(); //this.seed);
-      this.noise3D = Noise.Simplex.createNoise3D(); //this.seed);
-      this.noise4D = Noise.Simplex.createNoise4D(); //this.seed);
-
-      this.simplex = Noise.Simplex.createNoise3D(); //this.seed);
-    }
-
-    if (opts.combine != undefined) {
-      this.combine = opts.combine;
-    }
+    this.combine = undefined;
 
     this.mod = opts.mod;
+
+    this.warp = undefined;
+    this.warp2 = undefined;
+    this.warpNoise = undefined;
+    this.warpNoise2 = undefined;
 
     if (opts.warp != undefined) {
       this.warp = opts.warp;
 
       if (opts.warpNoise) {
         this.warpNoise = opts.warpNoise;
-        if (this.warpNoise.isNoise != true)
+        this.warpNoise.seed = this.prng.inRange(0, 1000000000);
+        if (this.warpNoise.isNoise != true) {
           this.warpNoise = new Noise(opts.warpNoise);
+        }
       }
     }
     if (opts.warp2 != undefined) {
@@ -918,7 +1166,7 @@ Better rank ordering method by Stefan Gustavson in 2012.
       this.multiplyAmps(opts.amps);
     }
 
-    // use central position when calculating derivative
+    // wether to use central position when calculating derivative
     this.central = opts.central;
 
     this.tileX = opts.tileX;
@@ -931,165 +1179,120 @@ Better rank ordering method by Stefan Gustavson in 2012.
 
     this.isNoise = true;
 
-    this.seed = opts.seed;
+    // vector to store derivative, will be reused
     this.derivative = undefined;
   }
 
   get scale() {
-    if (this.pos != undefined)
-      return this.getPropertyAtPosition("_scale", this.pos);
-    return this._scale;
+    return this.getPropertyAtPosition("_scale", this.pos);
   }
   set scale(scale) {
     this._scale = scale;
-    this.checkValue("_scale");
+    this.checkProperty("_scale");
   }
 
   get power() {
-    if (this.pos != undefined)
-      return this.getPropertyAtPosition("_power", this.pos);
-    return this._power;
+    return this.getPropertyAtPosition("_power", this.pos);
   }
   set power(power) {
     this._power = power;
-    this.checkValue("_power");
+    this.checkProperty("_power");
   }
 
   get octaves() {
-    if (this.pos != undefined)
-      return this.getPropertyAtPosition("_octaves", this.pos);
-    return this._octaves;
+    return this.getPropertyAtPosition("_octaves", this.pos);
   }
   set octaves(octaves) {
     this._octaves = octaves;
-    this.checkValue("_octaves");
+    this.checkProperty("_octaves");
   }
+
   get gain() {
-    if (this.pos != undefined)
-      return this.getPropertyAtPosition("_gain", this.pos);
-    return this._gain;
+    return this.getPropertyAtPosition("_gain", this.pos);
   }
   set gain(gain) {
     this._gain = gain;
-    this.checkValue("_gain");
+    this.checkProperty("_gain");
   }
+
   get lacunarity() {
-    if (this.pos != undefined)
-      return this.getPropertyAtPosition("_lacunarity", this.pos);
-    return this._lacunarity;
+    return this.getPropertyAtPosition("_lacunarity", this.pos);
   }
   set lacunarity(lacunarity) {
     this._lacunarity = lacunarity;
-    this.checkValue("_lacunarity");
+    this.checkProperty("_lacunarity");
   }
+
   get erosion() {
-    if (this.pos != undefined)
-      return this.getPropertyAtPosition("_erosion", this.pos);
-    return this._erosion;
+    return this.getPropertyAtPosition("_erosion", this.pos);
   }
   set erosion(erosion) {
     this._erosion = erosion;
-    this.checkValue("_erosion");
+    this.checkProperty("_erosion");
   }
+
   get amp() {
-    if (this.pos != undefined)
-      return this.getPropertyAtPosition("_amp", this.pos);
-    return this._amp;
+    return this.getPropertyAtPosition("_amp", this.pos);
   }
   set amp(amp) {
     this._amp = amp;
-    this.checkValue("_amp");
+    this.checkProperty("_amp");
   }
+
   get combine() {
-    if (this.pos != undefined)
-      return this.getPropertyAtPosition("_combine", this.pos);
-    return this._combine;
+    return this.getPropertyAtPosition("_combine", this.pos);
   }
   set combine(combine) {
     this._combine = combine;
-    this.checkValue("_combine");
+    this.checkProperty("_combine");
   }
+
   get sharpness() {
-    if (this.pos != undefined)
-      return this.getPropertyAtPosition("_sharpness", this.pos);
-    return this._sharpness;
+    return this.getPropertyAtPosition("_sharpness", this.pos);
   }
   set sharpness(sharpness) {
     this._sharpness = sharpness;
-    this.checkValue("_sharpness");
+    this.checkProperty("_sharpness");
   }
+
   get warp() {
-    if (this.pos != undefined)
-      return this.getPropertyAtPosition("_warp", this.pos);
-    return this._warp;
+    return this.getPropertyAtPosition("_warp", this.pos);
   }
   set warp(warp) {
     this._warp = warp;
-    this.checkValue("_warp");
+    this.checkProperty("_warp");
   }
+
   get warp2() {
-    if (this.pos != undefined)
-      return this.getPropertyAtPosition("_warp2", this.pos);
-    return this._warp2;
+    return this.getPropertyAtPosition("_warp2", this.pos);
   }
   set warp2(warp2) {
     this._warp2 = warp2;
-    this.checkValue("_warp2");
+    this.checkProperty("_warp2");
   }
+
   get steps() {
-    if (this.pos != undefined)
-      return this.getPropertyAtPosition("_steps", this.pos);
-    return this._steps;
+    return this.getPropertyAtPosition("_steps", this.pos);
   }
   set steps(steps) {
     this._steps = steps;
-    this.checkValue("_steps");
+    this.checkProperty("_steps");
   }
+
   get min() {
-    if (this.pos != undefined)
-      return this.getPropertyAtPosition("_min", this.pos);
-    return this._min;
+    return this.getPropertyAtPosition("_min", this.pos);
   }
   set min(min) {
     this._min = min;
-    this.checkValue("_min");
+    this.checkProperty("_min");
   }
+
   get max() {
-    if (this.pos != undefined)
-      return this.getPropertyAtPosition("_max", this.pos);
-    return this._max;
+    return this.getPropertyAtPosition("_max", this.pos);
   }
   set max(max) {
     this._max = max;
-    this.checkValue("_max");
-  }
-
-  set x(x) {
-    this.pos.x = x;
-  }
-  get x() {
-    return this.pos.x;
-  }
-  set y(y) {
-    this.pos.y = y;
-  }
-  get y() {
-    return this.pos.y;
-  }
-  set z(z) {
-    this.pos.z = z;
-  }
-  get z() {
-    return this.pos.z;
-  }
-
-  // checks if this[key] is an object or a number and
-  // if it is an object but .isNoise != true
-  // turns that into a new Noise object
-  checkValue(key) {
-    let v = this[key];
-    if (v != undefined && typeof v != "number" && !v.isNoise)
-      this[key] = new Noise(v);
+    this.checkProperty("_max");
   }
 
   get seed() {
@@ -1099,31 +1302,89 @@ Better rank ordering method by Stefan Gustavson in 2012.
     this.setSeed(seed);
   }
 
+  /**
+   * set seed for noise object, will create new simplex noise objects
+   * if no param given will generate random seed
+   * @param {number} seed
+   * @returns {number}
+   */
   setSeed(seed) {
-    this._seed = seed || Math.random() * 100000;
-    if (this.simplex) this.simplex = Noise.Simplex.createNoise3D(); //_seed);
+    this._seed = seed != undefined ? seed : Math.random() * 1000000000;
+
+    if (this.prng) this.prng = new Srand(this._seed);
+    let random = this.prng.random.bind(this.prng);
+    if (this.noise2D) this.noise2D = new Noise.Simplex.createNoise2D(random);
+    if (this.noise3D) this.noise3D = new Noise.Simplex.createNoise3D(random);
+    if (this.noise4D) this.noise4D = new Noise.Simplex.createNoise4D(random);
+
     if (this.layers) {
-      let i = 13;
-      for (let l of this.layers) {
-        l.setSeed(this._seed * 3 + i++ * 7);
+      for (let i = 0; i < this.layers.length; i++) {
+        this.layers[i].seed = this.prng.inRange(0, 1000000000);
       }
     }
 
     for (let k of Object.keys(this)) {
       if (this[k] != undefined && this[k].isNoise) {
-        this[k].setSeed(this._seed * 17 + 513);
+        this[k].seed = this.prng.inRange(0, 1000000000);
       }
     }
 
     return seed;
   }
 
-  shift(dX, dY, dZ) {
+  /**
+   * check if a property is a number or am object, if its an object
+   * but not a noise object, convert it to a noise object
+   * @param {string} key
+   */
+  checkProperty(key) {
+    let v = this[key];
+    if (v != undefined && typeof v != "number" && !v.isNoise) {
+      if (v.seed == undefined) v.seed = this.seed;
+
+      this[key] = new Noise(v);
+    }
+  }
+
+  /**
+   * get a property by key, if its a number return number
+   * if its a noise object, return the value at position
+   *
+   * @param {string} key
+   * @param {Vector} position
+   * @returns {number}
+   */
+  getPropertyAtPosition(key, position) {
+    let v = this[key];
+    if (v == undefined) return;
+    if (typeof v == "number") return v;
+    if (v.isNoise)
+      return position != undefined
+        ? v.get(position.x, position.y, position.z, position.w)
+        : v;
+  }
+
+  /**
+   * shift noise field
+   *
+   * @param {number} dX
+   * @param {number} dY
+   * @param {number} dZ
+   * @param {number} dW
+   */
+  shiftBy(dX, dY, dZ, dW) {
     this.shift.x += dX || 0;
     this.shift.y += dY || 0;
     this.shift.z += dZ || 0;
+    this.shift.w += dW || 0;
   }
 
+  /**
+   * multiply amplitude of all layers by array of values
+   * only works if noise object has layers
+   *
+   * @param {array} arr
+   */
   multiplyAmps(arr) {
     if (this.layers == undefined) return;
 
@@ -1132,22 +1393,151 @@ Better rank ordering method by Stefan Gustavson in 2012.
     }
   }
 
+  lerp(a, b, t) {
+    return (b - a) * t + a;
+  }
+
+  tilePosition() {
+    let x = this.pos.x;
+    let y = this.pos.y;
+    let newX = 0,
+      newY = 0,
+      newZ = 0,
+      newW = 0;
+    if (this.tileX) {
+      newX = Math.sin(x * Math.PI * 2);
+      newY = Math.cos(x * Math.PI * 2);
+    }
+    if (this.tileY) {
+      newZ = Math.sin(y * Math.PI * 2);
+      newW = Math.cos(y * Math.PI * 2);
+    }
+    if (this.tileX && !this.tileY) {
+      this.pos.set(newX, newY + y);
+    } else if (this.tileY && !this.tileX) {
+      this.pos.set(newZ + x, newW);
+    } else if (this.tileX && this.tileY) {
+      this.pos.set(newX, newY, newZ, newW);
+    }
+  }
+
+  warpPosition() {
+    let warp = this.warp;
+    if (warp == undefined || warp == 0) return;
+    let x = this.pos.x,
+      y = this.pos.y,
+      z = this.pos.z,
+      w = this.pos.w;
+
+    if (this.warpNoise) this.warpNoise.pos.copy(this.pos);
+
+    let noise = this.warpNoise || this;
+    let scl = noise.scale;
+    x +=
+      noise.getFBM(
+        x - 74.98 * scl,
+        y + 41.33 * scl,
+        z != undefined ? z + 76.56 * scl : undefined,
+        undefined,
+        true
+      ) * warp;
+    y +=
+      noise.getFBM(
+        x + 1.23 * scl,
+        y + 5.79 * scl,
+        z != undefined ? z + 12.85 * scl : undefined,
+        undefined,
+        true
+      ) * warp;
+    if (z != undefined) {
+      z +=
+        noise.getFBM(
+          x + 11.47 * scl,
+          y + 17.98 * scl,
+          z + 23.56 * scl,
+          undefined,
+          true
+        ) * warp;
+    }
+    if (w != undefined) {
+      w +=
+        noise.getFBM(
+          x + 54.47 * scl,
+          y + 34.98 * scl,
+          z + 76.56 * scl,
+          w + 45.98 * scl,
+          true
+        ) * warp;
+    }
+
+    let warp2 = this.warp2;
+    if (warp2 == undefined || warp2 == 0) {
+      this.pos.set(x, y, z, w);
+      return;
+    }
+
+    if (this.warpNoise2) this.warpNoise2.pos.copy(this.pos);
+
+    noise = this.warpNoise2 || this;
+    scl = noise.scale;
+    x +=
+      noise.getFBM(
+        x + 11.47 * scl,
+        y + 17.98 * scl,
+        undefined,
+        undefined,
+        true
+      ) * warp2;
+    y +=
+      noise.getFBM(
+        x - 73.98 * scl,
+        y + 44.33 * scl,
+        undefined,
+        undefined,
+        true
+      ) * warp2;
+    if (w != undefined) {
+      z +=
+        noise.getFBM(
+          x + 11.23 * scl,
+          y + 53.79 * scl,
+          z + 96.31 * scl,
+          undefined,
+          true
+        ) * warp2;
+    }
+    if (w != undefined) {
+      w +=
+        noise.getFBM(
+          x + 11.23 * scl,
+          y + 53.79 * scl,
+          z + 96.31 * scl,
+          w + 23.56 * scl,
+          true
+        ) * warp2;
+    }
+
+    this.pos.set(x, y, z, w);
+  }
+
   getFBM(x, y, z, w, noErosion) {
     let scale = this.scale;
 
     // if no layers exit early
     if (this.layers == undefined) {
       // if object has simplex noise return result of that
-      /*
-      if (this.simplex != undefined) {
-        return this.simplex(x * scale, y * scale, z * scale);
-      }*/
-      console.log(x, y, z, w);
-      if (this.noise4D != undefined && w != undefined)
+      if (this.noise4D != undefined && w != undefined) {
+        this.lastNoiseCall = "noise4D";
         return this.noise4D(x * scale, y * scale, z * scale, w * scale);
-      if (this.noise3D != undefined && z != undefined)
+      }
+      if (this.noise3D != undefined && z != undefined) {
+        this.lastNoiseCall = "noise3D";
         return this.noise3D(x * scale, y * scale, z * scale);
-      if (this.noise2D != undefined) return this.noise2D(x * scale, y * scale);
+      }
+      if (this.noise2D != undefined) {
+        this.lastNoiseCall = "noise2D";
+        return this.noise2D(x * scale, y * scale);
+      }
       // no data
       return 0;
     }
@@ -1173,7 +1563,15 @@ Better rank ordering method by Stefan Gustavson in 2012.
     for (let i = 0; i <= octaves && i < this.layers.length; i++) {
       let l = this.layers[i];
       let layerAmp = l.amp || 1;
-      let val = l.get(x * freq, y * freq, z * freq, up) * amp * layerAmp;
+      let val =
+        l.get(
+          x * freq,
+          y * freq,
+          z != undefined ? z * freq : undefined,
+          w != undefined ? w * freq : undefined
+        ) *
+        amp *
+        layerAmp;
       if (erosion > 0) {
         let d = l.getDerivative(x * freq, y * freq, z * freq);
         d.setLength(amp * layerAmp);
@@ -1193,174 +1591,15 @@ Better rank ordering method by Stefan Gustavson in 2012.
     return n / maxAmp;
   }
 
-  warpPosition() {
-    let warp = this.warp;
-    if (warp == undefined || warp == 0) return;
-    let x = this.pos.x,
-      y = this.pos.y,
-      z = this.pos.z,
-      w = this.pos.w;
-    if (this.warpNoise) {
-      this.warpNoise.pos.copy(this.pos);
-      let scl = this.warpNoise.scale;
-      x += this.warpNoise.get(x - 74.98 * scl, y + 49.33 * scl) * warp;
-      y += this.warpNoise.get(x + 13.23 * scl, y + 56.79 * scl) * warp;
-      if (z != undefined) {
-        z +=
-          this.warpNoise.get(
-            x + 11.47 * scl,
-            y + 17.98 * scl,
-            z + 23.56 * scl
-          ) * warp;
-      }
-      if (w != undefined) {
-        w +=
-          this.warpNoise.get(
-            x + 65.47 * scl,
-            y + 43.98 * scl,
-            z + 96.56 * scl,
-            w + 23.56 * scl
-          ) * warp;
-      }
-    } else {
-      let scl = this.scale;
-      x +=
-        this.getFBM(
-          x - 74.98 * scl,
-          y + 41.33 * scl,
-          undefined,
-          undefined,
-          true
-        ) * warp;
-      y +=
-        this.getFBM(
-          x + 1.23 * scl,
-          y + 5.79 * scl,
-          undefined,
-          undefined,
-          true
-        ) * warp;
-      if (z != undefined) {
-        z +=
-          this.getFBM(
-            x + 11.47 * scl,
-            y + 17.98 * scl,
-            z + 23.56 * scl,
-            undefined,
-            true
-          ) * warp;
-      }
-      if (w != undefined) {
-        w +=
-          this.getFBM(
-            x + 54.47 * scl,
-            y + 34.98 * scl,
-            z + 76.56 * scl,
-            w + 45.98 * scl,
-            true
-          ) * warp;
-      }
-    }
-
-    let warp2 = this.warp2;
-    if (warp2 == undefined || warp2 == 0) return;
-
-    if (this.warpNoise2) {
-      this.warpNoise2.pos.copy(this.pos);
-      let scl = this.warpNoise2.scale;
-      x +=
-        this.warpNoise2.get(x + 1.23 * scl, y + 5.79 * scl, z + 9.31 * scl) *
-        warp2;
-      y +=
-        this.warpNoise2.get(x + 11.47 * scl, y + 17.98 * scl, z + 23.56 * scl) *
-        warp2;
-      if (z != undefined) {
-        z +=
-          this.warpNoise2.get(
-            x - 71.98 * scl,
-            y + 43.33 * scl,
-            z + 93.1 * scl
-          ) * warp2;
-      }
-      if (w != undefined) {
-        w +=
-          this.warpNoise2.get(
-            x + 11.23 * scl,
-            y + 53.79 * scl,
-            z + 96.31 * scl,
-            w + 23.56 * scl
-          ) * warp2;
-      }
-    } else {
-      let scl = this.scale;
-      x +=
-        this.getFBM(
-          x + 11.47 * scl,
-          y + 17.98 * scl,
-          undefined,
-          undefined,
-          true
-        ) * warp2;
-      y +=
-        this.getFBM(
-          x - 73.98 * scl,
-          y + 44.33 * scl,
-          undefined,
-          undefined,
-          true
-        ) * warp2;
-      if (w != undefined) {
-        z +=
-          this.getFBM(
-            x + 11.23 * scl,
-            y + 53.79 * scl,
-            z + 96.31 * scl,
-            undefined,
-            true
-          ) * warp2;
-      }
-      if (w != undefined) {
-        w +=
-          this.getFBM(
-            x + 11.23 * scl,
-            y + 53.79 * scl,
-            z + 96.31 * scl,
-            w + 23.56 * scl,
-            true
-          ) * warp2;
-      }
-    }
-
-    this.pos.set(x, y, z, w);
-  }
-
-  tilePosition() {
-    if (!this.tileX && !this.tileY) return;
-
-    let x = this.x;
-    let y = this.y;
-    let newX = 0,
-      newY = 0,
-      newZ = 0,
-      newW = 0;
-    if (this.tileX) {
-      newX = Math.sin(x * Math.PI * 2);
-      newY = Math.cos(x * Math.PI * 2);
-    }
-    if (this.tileY) {
-      newZ = Math.sin(y * Math.PI * 2);
-      newW = Math.cos(y * Math.PI * 2);
-    }
-    if (this.tileX && !this.tileY) {
-      this.pos.set(newX, newY + y);
-    } else if (this.tileY && !this.tileX) {
-      this.pos.set(newX + x, newY);
-    } else if (this.tileX && this.tileY) {
-      this.pos.set(newX, newY, newZ + this.z, newW + this.w);
-    }
-  }
-
-  // main method, returns value between -1 and +1
+  /**
+   *
+   *
+   * @param {number} x
+   * @param {number} y
+   * @param {number} z
+   * @param {number} w
+   * @returns {number}
+   */
   getNoise(x, y, z, w) {
     x = x || 0;
     y = y || 0;
@@ -1371,14 +1610,16 @@ Better rank ordering method by Stefan Gustavson in 2012.
       w != undefined ? w + this.shift.w : undefined
     );
 
-    this.tilePosition();
-    this.warpPosition(this.x, this.y, this.z);
+    if (this.tileX || this.tileY) this.tilePosition();
+    if (this.warp || this.warp2) this.warpPosition();
 
-    let norm = this.getFBM(this.x, this.y, this.z, this.w);
+    let norm = this.getFBM(this.pos.x, this.pos.y, this.pos.z, this.pos.w);
 
-    if (this.clamp) {
-      norm = Math.min(norm, 1);
-      norm = Math.max(norm, -1);
+    let power = this.power;
+    if (power && power != 1) {
+      // convert to [0 - 1], apply power and back to [-1, 1]
+      norm = (Math.pow((norm + 1) * 0.5, power) - 0.5) * 2;
+      //norm = Math.pow(norm, power);
     }
 
     if (this.sharpness != undefined && this.sharpness != 0) {
@@ -1387,19 +1628,18 @@ Better rank ordering method by Stefan Gustavson in 2012.
       let billow = (Math.abs(norm) - 0.5) * 2;
       let ridged = (0.5 - Math.abs(norm)) * 2;
 
-      norm = MathUtils.lerp(norm, billow, Math.max(0, sharp));
-      norm = MathUtils.lerp(norm, ridged, Math.abs(Math.min(0, sharp)));
+      norm = this.lerp(norm, billow, Math.max(0, sharp));
+      norm = this.lerp(norm, ridged, Math.abs(Math.min(0, sharp)));
+    }
+
+    if (this.clamp) {
+      norm = Math.min(norm, 1);
+      norm = Math.max(norm, -1);
     }
 
     // modify with function
     if (this.mod) {
-      norm = this.mod(norm, this.x, this.y, this.z, this, up);
-    }
-
-    let power = this.power;
-    if (power && power != 1) {
-      // convert to [0 - 1], apply power and back to [-1, 1]
-      norm = (Math.pow((norm + 1) * 0.5, power) - 0.5) * 2;
+      norm = this.mod(norm, this.pos, this, up);
     }
 
     //combine with other noise:
@@ -1439,18 +1679,21 @@ Better rank ordering method by Stefan Gustavson in 2012.
     return this.derivative;
   }
 
-  getPropertyAtPosition(key, vec) {
-    let v = this[key];
-    if (typeof v == "number") return v;
-    if (v != undefined && v.isNoise) return v.get(vec.x, vec.y, vec.z);
-  }
-
-  // converts from -1, 1 to min, max
-  normToMinMax(norm) {
+  /**
+   * converts from -1, 1 to min, max
+   *
+   * @param {number} norm
+   * @returns {number}
+   */
+  mapNormalizedToMinMax(norm) {
     return (norm + 1) * 0.5 * (this.max - this.min) + this.min;
   }
-  // converts from min, max to -1, 1
-  minMaxToNorm(minMax) {
+  /**
+   * converts from min, max to -1, 1
+   * @param {number} minMax
+   * @returns {number}
+   */
+  mapMinMaxToNormalized(minMax) {
     return ((minMax - this.min) / (this.max - this.min) - 0.5) * 2;
   }
 
@@ -1464,11 +1707,24 @@ Better rank ordering method by Stefan Gustavson in 2012.
    * @param {number} w
    * @returns {number}
    */
-  getNorm(x, y, z, w) {
+  getNormalized(x, y, z, w) {
     if (typeof x == "number") {
       return this.getNoise(x, y, z, w);
     }
     return this.getNoise(x.x, x.y, x.z, x.w);
+  }
+
+  /**
+   * same as getNormalized
+   *
+   * @param {number} x
+   * @param {number} y
+   * @param {number} z
+   * @param {number} w
+   * @returns {number}
+   */
+  getNorm(x, y, z, w) {
+    return this.getNormalized(x, y, z, w);
   }
 
   /**
@@ -1483,6 +1739,6 @@ Better rank ordering method by Stefan Gustavson in 2012.
    * @returns {number}
    */
   get(x, y, z, w) {
-    return this.normToMinMax(this.getNorm(x, y, z, w));
+    return this.mapNormalizedToMinMax(this.getNormalized(x, y, z, w));
   }
 }

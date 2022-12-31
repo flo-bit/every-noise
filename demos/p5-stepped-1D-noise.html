@@ -20,40 +20,22 @@
       var nois;
 
       var counter = 0;
-
-      var values = [];
       function setup() {
         createCanvas(windowWidth - 2, windowHeight - 2);
         stroke(255);
 
-        nois = new Noise({ scl: 1, tileX: true });
-
-        // put 1000 values in the array (we'll use this to draw a line)
-        let resolution = 10000;
-        for (let x = 0; x < resolution; x++) {
-          let v = nois.get(x / resolution);
-          values.push(v);
-        }
+        nois = new Noise({ scl: 0.005, steps: 20 });
       }
 
       function draw() {
         background(0);
+        let stepSize = 0.5;
         let lastY;
-        counter += deltaTime;
-        // draw line from the values array
-        for (let i = 0; i < values.length; i++) {
-          // move the index around to create a looping effect
-          let index = Math.floor(i + counter) % values.length;
-          let v = values[index];
+        counter += deltaTime / 10;
+        for (let x = 0; x < width; x += stepSize) {
+          let v = nois.get(x + counter);
           let y = map(v, -1, 1, 0, height);
-
-          if (lastY)
-            line(
-              (width / values.length) * (i - 1),
-              lastY,
-              (width / values.length) * i,
-              y
-            );
+          if (lastY) line(x, lastY, x + stepSize, y);
           lastY = y;
         }
       }

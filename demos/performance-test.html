@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="../noise.js"></script>
+    <meta charset="utf-8" />
+  </head>
+  <style>
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 1%;
+      font-family: Arial, sans-serif;
+    }
+  </style>
+  <body>
+    <div id="results"></div>
+    <script>
+      function testPerformance() {
+        let results =
+          "all noise calls are 2D and executed 100,000 times<br><br>";
+        results += timeNoise({});
+        results += timeNoise({ oct: 5 });
+        results += timeNoise({ warp: 1 });
+        results += timeNoise({ oct: 5, warp: 1 });
+        results += timeNoise({
+          oct: 5,
+          scl: {},
+          warp: {},
+          warp2: 1,
+          erosion: 1,
+        });
+
+        document.getElementById("results").innerHTML = results;
+      }
+      function timeNoise(n, count) {
+        let noise = new Noise(eval(n));
+        count = count || 100000;
+
+        console.log(noise);
+        let startTime = performance.now();
+        for (var i = 0; i < count; i++) {
+          noise.get(i, 0);
+        }
+        let endTime = performance.now();
+
+        let settings = JSON.stringify(n);
+        let results =
+          "noise: <b>" +
+          settings +
+          "</b> <br>time per noise call: <b>" +
+          (((endTime - startTime) / count) * 1000).toFixed(2) +
+          " ns</b><br> calls per second: <b>" +
+          Math.floor((1000 / (endTime - startTime)) * count).toLocaleString() +
+          "</b><br><br>";
+        return results;
+      }
+
+      testPerformance();
+    </script>
+  </body>
+</html>

@@ -20,41 +20,28 @@
       var nois;
 
       var counter = 0;
-
-      var img;
       function setup() {
         createCanvas(windowWidth - 2, windowHeight - 2);
+        stroke(255);
 
-        noStroke();
         nois = new Noise({
-          scl: 0.5,
+          scl: 0.003,
           oct: 3,
-          tile: true,
+          sharpness: 1,
+          pow: 2,
         });
-
-        // draw tiling noise to a graphics object
-        img = createGraphics(200, 200);
-        img.noStroke();
-        for (let x = 0; x < img.width; x++) {
-          for (let y = 0; y < img.height; y++) {
-            let v = nois.get(x / img.width, y / img.height);
-            let c = map(v, -1, 1, 0, 255);
-            img.fill(c);
-            img.rect(x, y, 1, 1);
-          }
-        }
       }
 
       function draw() {
         background(0);
+        let stepSize = 0.5;
         let lastY;
         counter += deltaTime / 10;
-
-        // draw the graphics object to the canvas
-        for (let x = -counter % img.width; x < width; x += img.width) {
-          for (let y = -counter % img.height; y < height; y += img.height) {
-            image(img, x, y, img.width + 0.5, img.height + 0.5);
-          }
+        for (let x = 0; x < width; x += stepSize) {
+          let v = nois.get(x + Math.floor(counter));
+          let y = map(v, -1, 1, height * 0.01, height * 0.99);
+          if (lastY) line(x, lastY, x + stepSize, y);
+          lastY = y;
         }
       }
 
