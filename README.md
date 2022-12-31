@@ -78,10 +78,6 @@ let value = noise.get(vector);
 
 [1D noise](https://flo-bit.github.io/every-noise/demos/p5-stepped-1D-noise.html), [2D noise](https://flo-bit.github.io/every-noise/demos/p5-stepped-2D-noise.html)
 
-#### warped (p5.js)
-
-[1D noise](https://flo-bit.github.io/every-noise/demos/p5-warped-1D-noise.html), [2D noise](https://flo-bit.github.io/every-noise/demos/p5-warped-2D-noise.html)
-
 #### ridged (p5.js)
 
 [1D noise](https://flo-bit.github.io/every-noise/demos/p5-ridged-1D-noise.html), [2D noise](https://flo-bit.github.io/every-noise/demos/p5-ridged-2D-noise.html)
@@ -114,3 +110,7 @@ let value = noise.get(vector);
 - [ ] pixi noise flow field
 
 - [ ] adding gui to examples
+
+## License
+
+MIT License, see LICENSE file for details.
