@@ -28,6 +28,8 @@
 - combined noise
 
 - set properties of noise to own noise object (e.g. set noise.scale = new Noise());
+  ![](./images/advanced-1D.png)
+  ![](./images/advanced-2D.png)
 
 ### current version
 
