@@ -3,14 +3,29 @@
 3D every(where) noise javascript class for all your noise needs.
 
 - seeded noise
+  ![](./images/simple-1D.png)
+  ![](./images/simple-2D.png)
 - scaling, pow
 - fBM noise
+  ![](./images/fbm-1D.png)
+  ![](./images/fbm-2D.png)
 - erosion-like fBM
 - domain warping
-- ridges, billows
+  ![](./images/warped-2D.png)
+- ridged noise
+  ![](./images/ridged-1D.png)
+  ![](./images/ridged-2D.png)
+- billowed noise
+  ![](./images/billowed-1D.png)
+  ![](./images/billowed-2D.png)
 - stepped noise
-- combined noise
+  ![](./images/stepped-1D.png)
+  ![](./images/stepped-2D.png)
 - tileable noise
+  ![](./images/tileable-1D.png)
+  ![](./images/tileable-2D.png)
+
+- combined noise
 
 - set properties of noise to own noise object (e.g. set noise.scale = new Noise());
 
