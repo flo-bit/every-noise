@@ -47,8 +47,8 @@ class Vector {
     }
     this.x = x;
     this.y = y;
-    this.z = z;
-    this.w = w;
+    if (z != undefined && z != NaN) this.z = z;
+    if (w != undefined && w != NaN) this.w = w;
     return this;
   }
   add(x, y, z, w) {
@@ -271,7 +271,7 @@ class Vector {
 class Noise {
   static defaultUp = new Vector(0, 1, 0);
 
-  /**
+  /*
    * simplex-noise.js by Jonas Wagner
    *
    * version 4.0.1 slightly modified
@@ -823,7 +823,12 @@ Better rank ordering method by Stefan Gustavson in 2012.
 
     this.shift = Noise.firstDefined(
       opts.shift,
-      new Vector(opts.x || 0.357, opts.y || 0.579, opts.z || 0.739)
+      new Vector(
+        opts.x || 0.357,
+        opts.y || 0.579,
+        opts.z || 0.739,
+        opts.w || 0.123
+      )
     );
 
     // fbm stuff
@@ -875,6 +880,10 @@ Better rank ordering method by Stefan Gustavson in 2012.
         this.layers.push(n);
       }
     } else {
+      this.noise2D = Noise.Simplex.createNoise2D(); //this.seed);
+      this.noise3D = Noise.Simplex.createNoise3D(); //this.seed);
+      this.noise4D = Noise.Simplex.createNoise4D(); //this.seed);
+
       this.simplex = Noise.Simplex.createNoise3D(); //this.seed);
     }
 
@@ -1123,14 +1132,22 @@ Better rank ordering method by Stefan Gustavson in 2012.
     }
   }
 
-  getFBM(x, y, z, noErosion) {
+  getFBM(x, y, z, w, noErosion) {
     let scale = this.scale;
 
     // if no layers exit early
     if (this.layers == undefined) {
       // if object has simplex noise return result of that
-      if (this.simplex != undefined)
+      /*
+      if (this.simplex != undefined) {
         return this.simplex(x * scale, y * scale, z * scale);
+      }*/
+      console.log(x, y, z, w);
+      if (this.noise4D != undefined && w != undefined)
+        return this.noise4D(x * scale, y * scale, z * scale, w * scale);
+      if (this.noise3D != undefined && z != undefined)
+        return this.noise3D(x * scale, y * scale, z * scale);
+      if (this.noise2D != undefined) return this.noise2D(x * scale, y * scale);
       // no data
       return 0;
     }
@@ -1176,111 +1193,188 @@ Better rank ordering method by Stefan Gustavson in 2012.
     return n / maxAmp;
   }
 
-  warpPosition(x, y, z) {
+  warpPosition() {
     let warp = this.warp;
-    if (warp) {
-      if (this.warpNoise) {
-        this.warpNoise.pos.copy(this.pos);
-        let scl = this.warpNoise.scale;
-        x +=
-          this.warpNoise.get(
-            x - 74.98 * scl,
-            y + 49.33 * scl,
-            z + 11.11 * scl
-          ) * warp;
-        y +=
-          this.warpNoise.get(
-            x + 13.23 * scl,
-            y + 56.79 * scl,
-            z + 93.31 * scl
-          ) * warp;
+    if (warp == undefined || warp == 0) return;
+    let x = this.pos.x,
+      y = this.pos.y,
+      z = this.pos.z,
+      w = this.pos.w;
+    if (this.warpNoise) {
+      this.warpNoise.pos.copy(this.pos);
+      let scl = this.warpNoise.scale;
+      x += this.warpNoise.get(x - 74.98 * scl, y + 49.33 * scl) * warp;
+      y += this.warpNoise.get(x + 13.23 * scl, y + 56.79 * scl) * warp;
+      if (z != undefined) {
         z +=
           this.warpNoise.get(
             x + 11.47 * scl,
             y + 17.98 * scl,
             z + 23.56 * scl
           ) * warp;
-      } else {
-        let scl = this.scale;
-        x +=
-          this.getFBM(x - 74.98 * scl, y + 41.33 * scl, z + 18.1 * scl, true) *
-          warp;
-        y +=
-          this.getFBM(x + 1.23 * scl, y + 5.79 * scl, z + 9.31 * scl, true) *
-          warp;
+      }
+      if (w != undefined) {
+        w +=
+          this.warpNoise.get(
+            x + 65.47 * scl,
+            y + 43.98 * scl,
+            z + 96.56 * scl,
+            w + 23.56 * scl
+          ) * warp;
+      }
+    } else {
+      let scl = this.scale;
+      x +=
+        this.getFBM(
+          x - 74.98 * scl,
+          y + 41.33 * scl,
+          undefined,
+          undefined,
+          true
+        ) * warp;
+      y +=
+        this.getFBM(
+          x + 1.23 * scl,
+          y + 5.79 * scl,
+          undefined,
+          undefined,
+          true
+        ) * warp;
+      if (z != undefined) {
         z +=
-          this.getFBM(x + 11.47 * scl, y + 17.98 * scl, z + 23.56 * scl, true) *
-          warp;
+          this.getFBM(
+            x + 11.47 * scl,
+            y + 17.98 * scl,
+            z + 23.56 * scl,
+            undefined,
+            true
+          ) * warp;
+      }
+      if (w != undefined) {
+        w +=
+          this.getFBM(
+            x + 54.47 * scl,
+            y + 34.98 * scl,
+            z + 76.56 * scl,
+            w + 45.98 * scl,
+            true
+          ) * warp;
       }
     }
 
     let warp2 = this.warp2;
-    if (warp2) {
-      if (this.warpNoise2) {
-        this.warpNoise2.pos.copy(this.pos);
-        let scl = this.warpNoise2.scale;
-        x +=
-          this.warpNoise2.get(x + 1.23 * scl, y + 5.79 * scl, z + 9.31 * scl) *
-          warp2;
-        y +=
-          this.warpNoise2.get(
-            x + 11.47 * scl,
-            y + 17.98 * scl,
-            z + 23.56 * scl
-          ) * warp2;
+    if (warp2 == undefined || warp2 == 0) return;
+
+    if (this.warpNoise2) {
+      this.warpNoise2.pos.copy(this.pos);
+      let scl = this.warpNoise2.scale;
+      x +=
+        this.warpNoise2.get(x + 1.23 * scl, y + 5.79 * scl, z + 9.31 * scl) *
+        warp2;
+      y +=
+        this.warpNoise2.get(x + 11.47 * scl, y + 17.98 * scl, z + 23.56 * scl) *
+        warp2;
+      if (z != undefined) {
         z +=
           this.warpNoise2.get(
             x - 71.98 * scl,
             y + 43.33 * scl,
             z + 93.1 * scl
           ) * warp2;
-      } else {
-        let scl = this.scale;
-        x +=
-          this.getFBM(x + 11.47 * scl, y + 17.98 * scl, z + 23.56 * scl, true) *
-          warp2;
-        y +=
-          this.getFBM(x - 73.98 * scl, y + 44.33 * scl, z + 15.13 * scl, true) *
-          warp2;
+      }
+      if (w != undefined) {
+        w +=
+          this.warpNoise2.get(
+            x + 11.23 * scl,
+            y + 53.79 * scl,
+            z + 96.31 * scl,
+            w + 23.56 * scl
+          ) * warp2;
+      }
+    } else {
+      let scl = this.scale;
+      x +=
+        this.getFBM(
+          x + 11.47 * scl,
+          y + 17.98 * scl,
+          undefined,
+          undefined,
+          true
+        ) * warp2;
+      y +=
+        this.getFBM(
+          x - 73.98 * scl,
+          y + 44.33 * scl,
+          undefined,
+          undefined,
+          true
+        ) * warp2;
+      if (w != undefined) {
         z +=
-          this.getFBM(x + 11.23 * scl, y + 53.79 * scl, z + 96.31 * scl, true) *
-          warp2;
+          this.getFBM(
+            x + 11.23 * scl,
+            y + 53.79 * scl,
+            z + 96.31 * scl,
+            undefined,
+            true
+          ) * warp2;
+      }
+      if (w != undefined) {
+        w +=
+          this.getFBM(
+            x + 11.23 * scl,
+            y + 53.79 * scl,
+            z + 96.31 * scl,
+            w + 23.56 * scl,
+            true
+          ) * warp2;
       }
     }
 
-    this.pos.set(x, y, z);
+    this.pos.set(x, y, z, w);
   }
 
-  tilePosition(x, y, z) {
+  tilePosition() {
+    if (!this.tileX && !this.tileY) return;
+
+    let x = this.x;
+    let y = this.y;
     let newX = 0,
       newY = 0,
-      newZ = 0;
+      newZ = 0,
+      newW = 0;
     if (this.tileX) {
       newX = Math.sin(x * Math.PI * 2);
       newY = Math.cos(x * Math.PI * 2);
     }
     if (this.tileY) {
-      newY += Math.sin(y * Math.PI * 2);
-      newZ = Math.cos(y * Math.PI * 2);
+      newZ = Math.sin(y * Math.PI * 2);
+      newW = Math.cos(y * Math.PI * 2);
     }
-    this.pos.set(
-      (this.tileX ? 0 : x) + newX,
-      (this.tileY ? 0 : y) + newY,
-      z + newZ
-    );
+    if (this.tileX && !this.tileY) {
+      this.pos.set(newX, newY + y);
+    } else if (this.tileY && !this.tileX) {
+      this.pos.set(newX + x, newY);
+    } else if (this.tileX && this.tileY) {
+      this.pos.set(newX, newY, newZ + this.z, newW + this.w);
+    }
   }
 
   // main method, returns value between -1 and +1
-  getNoise(x, y, z) {
+  getNoise(x, y, z, w) {
     x = x || 0;
     y = y || 0;
-    z = z || 0;
-    this.pos.set(x + this.shift.x, y + this.shift.y, z + this.shift.z);
+    this.pos.set(
+      x + this.shift.x,
+      y + this.shift.y,
+      z != undefined ? z + this.shift.z : undefined,
+      w != undefined ? w + this.shift.w : undefined
+    );
 
-    this.tilePosition(this.x, this.y, this.z);
+    this.tilePosition();
     this.warpPosition(this.x, this.y, this.z);
 
-    let norm = this.getFBM(this.x, this.y, this.z);
+    let norm = this.getFBM(this.x, this.y, this.z, this.w);
 
     if (this.clamp) {
       norm = Math.min(norm, 1);
@@ -1361,42 +1455,20 @@ Better rank ordering method by Stefan Gustavson in 2012.
   }
 
   /**
-   * same as .getNorm but can only be called with x, y, z
-   *
-   * @param {number} x
-   * @param {number} y
-   * @param {number} z
-   * @returns {number}
-   */
-  getNormXYZ(x, y, z) {
-    return this.getNoise(x, y, z);
-  }
-  /**
    * function to get normalized noise value (between -1 and 1)
    * can be called either with x, y, z or with a vector
    *
-   * @param {number, object} vecOrX
-   * @param {number} y
-   * @param {number} z
-   * @returns {number}
-   */
-  getNorm(vecOrX, y, z) {
-    if (typeof vecOrX == "number") {
-      return this.getNormXYZ(vecOrX, y, z);
-    }
-    return this.getNormXYZ(vecOrX.x, vecOrX.y, vecOrX.z);
-  }
-
-  /**
-   * same as .get but can only be called with x, y, z
-   *
    * @param {number} x
    * @param {number} y
    * @param {number} z
+   * @param {number} w
    * @returns {number}
    */
-  getXYZ(x, y, z) {
-    return this.normToMinMax(this.getNormXYZ(x, y, z));
+  getNorm(x, y, z, w) {
+    if (typeof x == "number") {
+      return this.getNoise(x, y, z, w);
+    }
+    return this.getNoise(x.x, x.y, x.z, x.w);
   }
 
   /**
@@ -1404,15 +1476,13 @@ Better rank ordering method by Stefan Gustavson in 2012.
    * will return value between min and max
    * call either with x, y, z or with a vector
    *
-   * @param {number, object} vecOrX
+   * @param {number} x
    * @param {number} y
    * @param {number} z
+   * @param {number} w
    * @returns {number}
    */
-  get(vecOrX, y, z) {
-    if (typeof vecOrX == "number") {
-      return this.getXYZ(vecOrX, y, z);
-    }
-    return this.getXYZ(vecOrX.x, vecOrX.y, vecOrX.z);
+  get(x, y, z, w) {
+    return this.normToMinMax(this.getNorm(x, y, z, w));
   }
 }
