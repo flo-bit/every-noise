@@ -3,7 +3,12 @@
   <head>
     <script src="../noise.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script>
-
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.9/dat.gui.min.js"
+      integrity="sha512-WoO4Ih0CDOSLYafy22wZD/mcJ7k0ESLqtQsFa6zFKnEUrbtuGU+GkLtVhgt93xa2qewG5gKEC6CWlN8OaCTSVg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
     <meta charset="utf-8" />
   </head>
   <style>
@@ -17,14 +22,27 @@
   </style>
   <body style="background: black">
     <script>
-      var nois;
+      var nois,
+        counter = 0,
+        gui;
 
-      var counter = 0;
+      var settings = {
+        scale: 0.005,
+        steps: 20,
+      };
       function setup() {
         createCanvas(windowWidth - 2, windowHeight - 2);
         stroke(255);
 
         nois = new Noise({ scl: 0.005, steps: 20 });
+
+        gui = new dat.GUI();
+        gui.add(settings, "scale", 0.0001, 0.02).onChange(function (value) {
+          nois.scale = value;
+        });
+        gui.add(settings, "steps", 0, 100, 1).onChange(function (value) {
+          nois.steps = value;
+        });
       }
 
       function draw() {
@@ -34,7 +52,7 @@
         counter += deltaTime / 10;
         for (let x = 0; x < width; x += stepSize) {
           let v = nois.get(x + counter);
-          let y = map(v, -1, 1, 0, height);
+          let y = map(v, -1, 1, height * 0.01, height * 0.99);
           if (lastY) line(x, lastY, x + stepSize, y);
           lastY = y;
         }

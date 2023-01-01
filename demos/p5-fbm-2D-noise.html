@@ -3,7 +3,12 @@
   <head>
     <script src="../noise.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script>
-
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.9/dat.gui.min.js"
+      integrity="sha512-WoO4Ih0CDOSLYafy22wZD/mcJ7k0ESLqtQsFa6zFKnEUrbtuGU+GkLtVhgt93xa2qewG5gKEC6CWlN8OaCTSVg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
     <meta charset="utf-8" />
   </head>
   <style>
@@ -17,27 +22,74 @@
   </style>
   <body style="background: black">
     <script>
-      var nois;
+      var nois,
+        counter = 0,
+        gui;
 
-      var counter = 0;
+      var settings = {
+        scale: 0.005,
+        octaves: 4,
+        gain: 0.5,
+        lacunarity: 2,
+        update: true,
+        cellSize: 8,
+      };
       function setup() {
         createCanvas(windowWidth - 2, windowHeight - 4);
         noStroke();
 
-        nois = new Noise({ scl: 0.002, octaves: 4 });
+        createNoise();
+
+        gui = new dat.GUI();
+        gui.add(settings, "scale", 0.0001, 0.02).onChange(function (value) {
+          nois.scale = value;
+          if (!settings.update) draw();
+        });
+        gui.add(settings, "octaves", 0, 10, 1).onChange(function (value) {
+          createNoise();
+          if (!settings.update) draw();
+        });
+        gui.add(settings, "gain", 0.01, 5).onChange(function (value) {
+          nois.gain = value;
+          if (!settings.update) draw();
+        });
+        gui.add(settings, "lacunarity", 0.01, 5).onChange(function (value) {
+          nois.lacunarity = value;
+          if (!settings.update) draw();
+        });
+        gui.add(settings, "cellSize", 1, 20, 1).onChange(function (value) {
+          if (!settings.update) draw();
+        });
+
+        gui.add(settings, "update").onChange(function (value) {
+          if (value) {
+            loop();
+          } else {
+            noLoop();
+          }
+        });
+      }
+
+      function createNoise() {
+        nois = new Noise({
+          seed: 1,
+          scl: 0.005,
+          octaves: settings.octaves,
+          gain: settings.gain,
+          lacunarity: settings.lacunarity,
+        });
       }
 
       function draw() {
         background(0);
-        let cellSize = 8;
-        counter += deltaTime / 20;
+        if (settings.update) counter += deltaTime / 20;
 
-        for (let x = 0; x < width; x += cellSize) {
-          for (let y = 0; y < height; y += cellSize) {
+        for (let x = 0; x < width; x += settings.cellSize) {
+          for (let y = 0; y < height; y += settings.cellSize) {
             let v = nois.get(x, y, counter);
             let r = map(v, -1, 1, 0, 255);
             fill(r);
-            rect(x, y, cellSize, cellSize);
+            rect(x, y, settings.cellSize, settings.cellSize);
           }
         }
       }
