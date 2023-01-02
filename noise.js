@@ -1649,8 +1649,9 @@ Better rank ordering method by Stefan Gustavson in 2012.
 
     // turn into steps
     // (e.g. 2 steps => only 0 or 1, 3 steps => 0, 0.5 and 1)
-    let steps = Math.round(this.steps);
-    if (steps != undefined && steps > 1) {
+    let steps = this.steps;
+    if (steps != undefined && steps >= 2) {
+      steps = Math.round(steps);
       let s = (Math.floor((norm + 1) * steps * 0.5) / (steps - 1) - 0.5) * 2;
       return s;
     }

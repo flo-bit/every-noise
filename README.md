@@ -10,7 +10,7 @@
   [![](./images/fbm-1D.png)](https://flo-bit.github.io/every-noise/demos/p5-fbm-1D-noise.html)
   [![](./images/fbm-2D.png)](https://flo-bit.github.io/every-noise/demos/p5-fbm-2D-noise.html)
 - domain warping
-  [![](./images/warped-2D.png)](https://flo-bit.github.io/every-noise/demos/p5-warp-2D-noise.html)
+  [![](./images/warped-2D.png)](https://flo-bit.github.io/every-noise/demos/p5-warped-2D-noise.html)
 - ridged noise
   [![](./images/ridged-1D.png)](https://flo-bit.github.io/every-noise/demos/p5-ridged-1D-noise.html)
   [![](./images/ridged-2D.png)](https://flo-bit.github.io/every-noise/demos/p5-ridged-2D-noise.html)
@@ -23,13 +23,12 @@
 - tileable noise
   [![](./images/tileable-1D.png)](https://flo-bit.github.io/every-noise/demos/p5-tileable-1D-noise.html)
   [![](./images/tileable-2D.png)](https://flo-bit.github.io/every-noise/demos/p5-tileable-2D-noise.html)
+- set properties of noise to own noise object (e.g. set noise.scale = new Noise());
+  [![](./images/advanced-1D.png)](https://flo-bit.github.io/every-noise/demos/p5-advanced-1D-noise.html)
+  [![](./images/advanced-2D.png)](https://flo-bit.github.io/every-noise/demos/p5-advanced-2D-noise.html)
 - erosion-like fBM
 
 - combined noise
-
-- set properties of noise to own noise object (e.g. set noise.scale = new Noise());
-  ![](./images/advanced-1D.png)
-  ![](./images/advanced-2D.png)
 
 ### current version
 
@@ -63,13 +62,14 @@ let noise = new Noise();
 #### get noise value
 
 ```javascript
-let value = noise.get(x, y, z);
+// z and w are optional
+let value = noise.get(x, y, z, w);
 ```
 
 OR
 
 ```javascript
-// vector has {x, y, z} properties
+// vector has {x, y, (optional) z, (optional) w} properties
 let value = noise.get(vector);
 ```
 
@@ -121,12 +121,15 @@ let value = noise.get(vector);
 
 ### coming soon
 
-- [ ] erosion 2D noise
-- [ ] erosion on sphere
+- erosion 1D noise
 
-- [ ] pixi noise flow field
+- erosion 2D noise
 
-- [ ] adding gui to examples
+- erosion on sphere
+
+- pixi noise flow field
+
+- adding gui to examples
 
 ## License
 
