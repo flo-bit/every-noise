@@ -3,7 +3,12 @@
   <head>
     <script src="../noise.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script>
-
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.9/dat.gui.min.js"
+      integrity="sha512-WoO4Ih0CDOSLYafy22wZD/mcJ7k0ESLqtQsFa6zFKnEUrbtuGU+GkLtVhgt93xa2qewG5gKEC6CWlN8OaCTSVg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
     <meta charset="utf-8" />
   </head>
   <style>
@@ -17,27 +22,54 @@
   </style>
   <body style="background: black">
     <script>
-      var nois;
+      var nois,
+        counter = 0;
 
-      var counter = 0;
+      var settings = {
+        scale: 0.01,
+        seed: 2,
+        cellSize: 8,
+      };
       function setup() {
         createCanvas(windowWidth - 2, windowHeight - 4);
         noStroke();
 
-        nois = new Noise({ scl: 0.01, seed: 2, min: 0, max: 255 });
+        createNoise();
+
+        gui = new dat.GUI();
+        gui.add(settings, "scale", 0.001, 0.05).onChange(function (value) {
+          nois.scale = value;
+          draw();
+        });
+        gui.add(settings, "seed", 1, 100, 1).onChange(function (value) {
+          createNoise();
+          draw();
+        });
+
+        gui.add(settings, "cellSize", 3, 20, 1).onChange(function (value) {
+          draw();
+        });
+        noLoop();
+      }
+
+      function createNoise() {
+        nois = new Noise({
+          scl: settings.scale,
+          seed: settings.seed,
+          min: 0,
+          max: 255,
+        });
       }
 
       function draw() {
         background(0);
-        let cellSize = 4;
 
-        for (let x = 0; x < width; x += cellSize) {
-          for (let y = 0; y < height; y += cellSize) {
+        for (let x = 0; x < width; x += settings.cellSize) {
+          for (let y = 0; y < height; y += settings.cellSize) {
             fill(nois.get(x, y, counter));
-            rect(x, y, cellSize, cellSize);
+            rect(x, y, settings.cellSize, settings.cellSize);
           }
         }
-        noLoop();
       }
 
       function windowResized() {
