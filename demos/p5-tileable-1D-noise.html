@@ -27,14 +27,74 @@
       var counter = 0;
 
       var values = [];
+
+      var settings = {
+        scale: 0.2,
+        steps: 0,
+        update: true,
+        octaves: 3,
+        gain: 0.5,
+        lacunarity: 2,
+        speed: 0.2,
+      };
       function setup() {
         createCanvas(windowWidth - 2, windowHeight - 2);
         stroke(255);
 
-        nois = new Noise({ scl: 0.2, oct: 3, tileX: true });
+        createNoise();
+        calculateValues();
 
-        // put 1000 values in the array (we'll use this to draw a line)
-        let resolution = 10000;
+        gui = new dat.GUI();
+        gui.add(settings, "scale", 0.01, 10).onChange(function (value) {
+          nois.scale = value;
+          calculateValues();
+          if (!settings.update) draw();
+        });
+        gui.add(settings, "steps", 0, 30, 1).onChange(function (value) {
+          nois.steps = value;
+          calculateValues();
+          if (!settings.update) draw();
+        });
+        gui.add(settings, "octaves", 0, 10, 1).onChange(function (value) {
+          createNoise();
+          calculateValues();
+          if (!settings.update) draw();
+        });
+        gui.add(settings, "gain", 0.01, 5).onChange(function (value) {
+          nois.gain = value;
+          calculateValues();
+          if (!settings.update) draw();
+        });
+        gui.add(settings, "lacunarity", 0.01, 5).onChange(function (value) {
+          nois.lacunarity = value;
+          calculateValues();
+          if (!settings.update) draw();
+        });
+
+        gui.add(settings, "speed", 0.05, 1);
+
+        gui.add(settings, "update").onChange(function (value) {
+          if (value) {
+            loop();
+          } else {
+            noLoop();
+          }
+        });
+      }
+
+      function createNoise() {
+        nois = new Noise({
+          scl: settings.scale,
+          oct: settings.octaves,
+          gain: settings.gain,
+          lac: settings.lacunarity,
+          tileX: true,
+        });
+      }
+      function calculateValues() {
+        values = [];
+        // put 2000 values in the array (we'll use this to draw a line)
+        let resolution = 2000;
         for (let x = 0; x < resolution; x++) {
           let v = nois.get((x / resolution) * 10);
           values.push(v);
@@ -44,7 +104,7 @@
       function draw() {
         background(0);
         let lastY;
-        counter += deltaTime;
+        counter += deltaTime * settings.speed;
         // draw line from the values array
         for (let i = 0; i < values.length; i++) {
           // move the index around to create a looping effect

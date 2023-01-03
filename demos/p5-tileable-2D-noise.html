@@ -3,7 +3,12 @@
   <head>
     <script src="../noise.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script>
-
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.9/dat.gui.min.js"
+      integrity="sha512-WoO4Ih0CDOSLYafy22wZD/mcJ7k0ESLqtQsFa6zFKnEUrbtuGU+GkLtVhgt93xa2qewG5gKEC6CWlN8OaCTSVg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
     <meta charset="utf-8" />
   </head>
   <style>
@@ -17,24 +22,74 @@
   </style>
   <body style="background: black">
     <script>
-      var nois;
+      var nois,
+        counter = 0,
+        img;
 
-      var counter = 0;
-
-      var img;
+      var settings = {
+        scale: 0.5,
+        steps: 0,
+        update: true,
+        octaves: 3,
+        gain: 0.5,
+        lacunarity: 2,
+      };
       function setup() {
         createCanvas(windowWidth - 2, windowHeight - 2);
 
-        noStroke();
-        nois = new Noise({
-          scl: 0.5,
-          oct: 3,
-          tile: true,
-        });
+        createNoise();
 
         // draw tiling noise to a graphics object
         img = createGraphics(200, 200);
         img.noStroke();
+        drawImage();
+
+        gui = new dat.GUI();
+        gui.add(settings, "scale", 0.01, 10).onChange(function (value) {
+          nois.scale = value;
+          drawImage();
+          if (!settings.update) draw();
+        });
+        gui.add(settings, "steps", 0, 30, 1).onChange(function (value) {
+          nois.steps = value;
+          drawImage();
+          if (!settings.update) draw();
+        });
+        gui.add(settings, "octaves", 0, 10, 1).onChange(function (value) {
+          createNoise();
+          drawImage();
+          if (!settings.update) draw();
+        });
+        gui.add(settings, "gain", 0.01, 5).onChange(function (value) {
+          nois.gain = value;
+          drawImage();
+          if (!settings.update) draw();
+        });
+        gui.add(settings, "lacunarity", 0.01, 5).onChange(function (value) {
+          nois.lacunarity = value;
+          drawImage();
+          if (!settings.update) draw();
+        });
+
+        gui.add(settings, "update").onChange(function (value) {
+          if (value) {
+            loop();
+          } else {
+            noLoop();
+          }
+        });
+      }
+
+      function createNoise() {
+        nois = new Noise({
+          scl: settings.scale,
+          oct: settings.octaves,
+          gain: settings.gain,
+          lac: settings.lacunarity,
+          tile: true,
+        });
+      }
+      function drawImage() {
         for (let x = 0; x < img.width; x++) {
           for (let y = 0; y < img.height; y++) {
             let v = nois.get(x / img.width, y / img.height);
