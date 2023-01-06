@@ -61,9 +61,10 @@
 
       function createNoise() {
         nois = new Noise({
-          scl: 0.0035,
           seed: 2,
+          scl: settings.scale,
           oct: settings.octaves,
+          // these are also noise objects
           sharpness: { scl: 0.0009 },
           pow: { min: 0.5, max: 3, scl: 0.0005 },
           warp: { min: -1, max: 50, scl: 0.01 },
