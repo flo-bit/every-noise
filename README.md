@@ -1,6 +1,6 @@
 ## every-noise
 
-3D every(where) noise javascript class for all your noise needs.
+3D every(where) noise javascript class for all your noise needs. 20kb minified, dependency-free.
 
 - seeded noise
 - scaling, pow
@@ -14,20 +14,6 @@
 - erosion-like fBM
 
 - combined noise
-
-### current version
-
-this is a work in progress, so expect bugs and changes. until version 1.0.0 is released, the api as well as noise results may change.
-
-#### v0.0.2 (2022-12-31)
-
-- added more examples
-- added performance test
-- added prng for seeded noise
-
-#### v0.0.1 (2022-12-27)
-
-- initial release
 
 ### how to use
 
@@ -57,6 +43,26 @@ OR
 // vector has {x, y, (optional) z, (optional) w} properties
 let value = noise.get(vector);
 ```
+
+#### also included
+
+- Vector class (2D, 3D, 4D) with vector math functions
+
+- [jsrand](https://github.com/DomenicoDeFelice/jsrand) for seeded pseudo random number generation
+
+### current version
+
+this is a work in progress, so expect bugs and changes. until version 1.0.0 is released, the api as well as noise results may change.
+
+#### v0.0.2 (2022-12-31)
+
+- added more examples
+- added performance test
+- added prng for seeded noise
+
+#### v0.0.1 (2022-12-27)
+
+- initial release
 
 ### demos
 
