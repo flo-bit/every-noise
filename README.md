@@ -20,7 +20,7 @@
 #### import
 
 ```html
-<script src="https://flo-bit.github.io/every-noise/noise.js"></script>
+<script src="https://flo-bit.github.io/every-noise/noise.min.js"></script>
 ```
 
 #### create noise object
