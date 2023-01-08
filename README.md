@@ -142,3 +142,10 @@ this is a work in progress, so expect bugs and changes. until version 1.0.0 is r
 ## License
 
 MIT License, see LICENSE file for details.
+
+## Credits
+
+This project uses the following libraries:
+
+- [jsrand (MIT License)](https://github.com/DomenicoDeFelice/jsrand)
+- [simplex-noise.js (MIT License)](https://github.com/jwagner/simplex-noise.js/)
