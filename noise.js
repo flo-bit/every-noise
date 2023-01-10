@@ -1075,6 +1075,10 @@ Better rank ordering method by Stefan Gustavson in 2012.
     this.noise3D = undefined;
     this.noise4D = undefined;
 
+    let octaves = this.octaves;
+    if (this._octaves.isNoise) {
+      octaves = Math.floor(this._octaves.max);
+    }
     if (this.octaves > 0 || opts.layers != undefined) {
       this.layers = [];
       for (
@@ -1340,7 +1344,7 @@ Better rank ordering method by Stefan Gustavson in 2012.
   checkProperty(key) {
     let v = this[key];
     if (v != undefined && typeof v != "number" && !v.isNoise) {
-      if (v.seed == undefined) v.seed = this.seed;
+      if (v.seed == undefined) v.seed = this.prng.random() * 1000000;
 
       this[key] = new Noise(v);
     }
