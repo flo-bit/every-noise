@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="../noise.js"></script>
     <meta charset="utf-8" />
   </head>
   <style>
@@ -15,7 +14,8 @@
   </style>
   <body>
     <div id="results"></div>
-    <script>
+    <script type="module">
+      import Noise from "../noise.js";
       function testPerformance() {
         let results =
           "all noise calls are 2D and executed 100,000 times<br><br>";

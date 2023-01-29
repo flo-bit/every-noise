@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="../noise.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.9/dat.gui.min.js"
@@ -34,7 +33,11 @@
         gain: 0.5,
         lacunarity: 2,
       };
-      function setup() {
+      async function setup() {
+        await import("../noise.js").then((module) => {
+          window.Noise = module.default;
+        });
+
         createCanvas(windowWidth - 2, windowHeight - 2);
 
         createNoise();
@@ -102,6 +105,7 @@
       }
 
       function draw() {
+        if (img == undefined) return;
         background(0);
         let lastY;
         counter += deltaTime / 10;

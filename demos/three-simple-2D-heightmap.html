@@ -6,7 +6,6 @@
       content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.148.0/three.min.js"></script>
-    <script src="../noise.js"></script>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.9/dat.gui.min.js"
       integrity="sha512-WoO4Ih0CDOSLYafy22wZD/mcJ7k0ESLqtQsFa6zFKnEUrbtuGU+GkLtVhgt93xa2qewG5gKEC6CWlN8OaCTSVg=="
@@ -16,7 +15,9 @@
   </head>
 
   <body style="overflow: hidden; background-color: rgb(0, 0, 0)">
-    <script>
+    <script type="module">
+      import Noise from "../noise.js";
+
       var renderer,
         scene,
         camera,
@@ -28,8 +29,8 @@
         gui;
 
       var settings = {
-        widthSubdivisions: 600,
-        heightSubdivisions: 400,
+        widthSubdivisions: 100,
+        heightSubdivisions: 70,
         scale: 0.35,
         octaves: 7,
         pow: 2,
