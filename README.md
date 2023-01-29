@@ -19,8 +19,8 @@
 
 #### import
 
-```html
-<script src="https://flo-bit.github.io/every-noise/noise.min.js"></script>
+```javascript
+import Noise from "https://flo-bit.github.io/every-noise/noise.js";
 ```
 
 #### create noise object
@@ -138,6 +138,10 @@ this is a work in progress, so expect bugs and changes. until version 1.0.0 is r
 - add more examples
 
 - add gui to warped, ridged and simple 3D sphere example
+
+- add example with all options and gui
+  - 1D and 2D p5 version
+  - 3D three.js version (sphere or heightmap plane)
 
 ## License
 
