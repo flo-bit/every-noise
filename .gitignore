@@ -9,3 +9,5 @@ README-old.md
 simplex*
 index*
 .prettierignore
+jest.config.js
+noise.test.js
