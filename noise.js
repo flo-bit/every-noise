@@ -1,4 +1,4 @@
-import Vector from "https://flo-bit.github.io/js-utils/vector.js";
+import Vector from "../js-utils/vector.js";
 
 /** Srand
  * @param {number} seed
