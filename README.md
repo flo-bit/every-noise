@@ -1,5 +1,7 @@
 ## every-noise
 
+:warn: This repository is archived. Find the new and improved (typescript) version [here](https://github.com/flo-bit/uber-noise)!
+
 3D every(where) noise javascript class for all your noise needs. 20kb minified, dependency-free.
 
 - seeded noise
